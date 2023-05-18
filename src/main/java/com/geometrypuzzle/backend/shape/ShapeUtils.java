@@ -13,12 +13,13 @@ public class ShapeUtils {
     static boolean isPolygon(List<Point> coordinates) {
         return coordinates.size() > 2;
     }
+
     static boolean isConvex(List<Point> coordinates) {
         /* This logic is built around the concept of convex polygon having
          * - the sum of its exterior angles equal to 360 degrees
          * - arc tangent having one fixed orientation while traversing its lines,
          *  e.g. as initiated CW or A-CW */
-        if (!(coordinates.size() > 2)) return false;
+        if (!isPolygon(coordinates)) return false;
 
         Double orientation = null;
         double sumOfAngles = 0.0;

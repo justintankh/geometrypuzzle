@@ -8,7 +8,7 @@ import org.junit.jupiter.params.provider.CsvFileSource;
 
 import java.util.List;
 
-class ShapeTestFromCSV {
+class ShapeTestCSV {
     Shape shape;
 
     @BeforeEach

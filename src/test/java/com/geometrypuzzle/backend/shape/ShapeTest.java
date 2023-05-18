@@ -49,7 +49,7 @@ class ShapeTest {
                         new Point(865, 886),
                         new Point(563, -184),
                         new Point(-332, -426))
-                ).map(Arguments::of);
+        ).map(Arguments::of);
     }
 
     @ParameterizedTest(name = "{0}")

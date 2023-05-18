@@ -7,7 +7,7 @@ import java.util.List;
 public class Puzzle {
     List<Point> selectedPoints;
 
-    void StartWorkflow(){
+    void StartWorkflow() {
         /* Check for matching UUID, continue workflow last leftOff */
 
         // Welcome to the GIC geometry puzzle app
@@ -16,13 +16,13 @@ public class Puzzle {
         // [2] Generate a random shape
     }
 
-    void DispatchPage(){
+    void DispatchPage() {
         // 1. Your current shape is incomplete
         // 2. Your {current}/{generated} shape is valid and complete
         // 3. Your finalized shape is ..
     }
 
-    void RandomShapeGeneration(){
+    void RandomShapeGeneration() {
         // Your customer generated shape is
         // 1. (x, y)
         // 2. (x, y)

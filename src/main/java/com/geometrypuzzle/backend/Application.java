@@ -9,16 +9,16 @@ import org.springframework.stereotype.Component;
 
 @SpringBootApplication
 public class Application {
-	private static final Logger logger = LoggerFactory.getLogger(Application.class);
+    private static final Logger logger = LoggerFactory.getLogger(Application.class);
 
-	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
 
-	@Component
-	public class GetProperitiesBean {
-		public GetProperitiesBean(@Value("${server.port}") String port) {
-			logger.info("Started on http://localhost:{}", port);
-		}
-	}
+    @Component
+    public class GetProperitiesBean {
+        public GetProperitiesBean(@Value("${server.port}") String port) {
+            logger.info("Started on http://localhost:{}", port);
+        }
+    }
 }

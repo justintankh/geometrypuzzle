@@ -5,13 +5,15 @@ import org.springframework.beans.factory.annotation.Value;
 
 @Data
 public class ShapeConfig {
-    private ShapeConfig(){
+    private ShapeConfig() {
         throw new IllegalStateException("Utility class"); /* Sonarlint compliance */
     }
+
     public static final class RandomShape {
-        private RandomShape(){
+        private RandomShape() {
             throw new IllegalStateException("Utility class"); /* Sonarlint compliance */
         }
+
         public static final int VALID_MINIMUM = 3;
         @Value("${randomShapeConfig.maxCoordinates:10}")
         public static int maxCoordinates = 10;
