@@ -22,12 +22,13 @@ class ShapeTestFromCSV {
         // Arrange
         List<String> commaSeperated = List.of(input.split(","));
         List<Point> cleanInput = ShapeTestUtils.parseAsPoints(commaSeperated, ":");
-
-        // Act
         shape.setShape(cleanInput);
 
+        // Act
+        boolean isConvex = shape.isConvex();
+
         // Assert
-        Assertions.assertEquals(shape.isConvex(), true);
+        Assertions.assertEquals(isConvex, true);
     }
 
     @ParameterizedTest(name = "{0}")
@@ -36,11 +37,12 @@ class ShapeTestFromCSV {
         // Arrange
         List<String> commaSeperated = List.of(input.split(","));
         List<Point> cleanInput = ShapeTestUtils.parseAsPoints(commaSeperated, ":");
-
-        // Act
         shape.setShape(cleanInput);
 
+        // Act
+        boolean isConvex = shape.isConvex();
+
         // Assert
-        Assertions.assertEquals(shape.isConvex(), false);
+        Assertions.assertEquals(isConvex, false);
     }
 }

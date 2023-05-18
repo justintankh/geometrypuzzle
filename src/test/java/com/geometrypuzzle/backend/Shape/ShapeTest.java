@@ -20,7 +20,6 @@ class ShapeTest {
     }
 
     private static Stream<Arguments> isConvexPolygonsTestParam(){
-        // ARRANGE
         return Stream.of(
                 new ShapeTestSetup(new Point(1, 1), new Point(5, 1), new Point(4, 5)),
                 new ShapeTestSetup(new Point(679,662), new Point(589,954), new Point(492,850), new Point(-143,86), new Point(238,-788))
@@ -29,14 +28,15 @@ class ShapeTest {
     @ParameterizedTest(name = "{0}")
     @MethodSource("isConvexPolygonsTestParam")
     void isConvex(ShapeTestSetup testShape) {
-        // ACT
+        // ARRANGE
         shape.setShape(testShape.getShapePoints());
+        // ACT
+        boolean isConvex = shape.isConvex();
         // ASSERT
-        Assertions.assertEquals(shape.isConvex(), true);
+        Assertions.assertEquals(isConvex, true);
     }
 
     private static Stream<Arguments> isNotConvexPolygonsTestParam(){
-        // ARRANGE
         return Stream.of(
                 new ShapeTestSetup(new Point(-332,-426), new Point(-845,-616), new Point(865,886), new Point(347,-455)),
                 new ShapeTestSetup(new Point(-332,-426), new Point(-845,-616), new Point(865,886), new Point(347,-455), new Point(-470,815), new Point(-744,940), new Point(-805,-418), new Point(563,-184))
@@ -45,9 +45,11 @@ class ShapeTest {
     @ParameterizedTest(name = "{0}")
     @MethodSource("isNotConvexPolygonsTestParam")
     void isNotConvex(ShapeTestSetup testShape) {
-        // ACT
+        // ARRANGE
         shape.setShape(testShape.getShapePoints());
+        // ACT
+        boolean isConvex = shape.isConvex();
         // ASSERT
-        Assertions.assertEquals(shape.isConvex(), false);
+        Assertions.assertEquals(isConvex, false);
     }
 }
