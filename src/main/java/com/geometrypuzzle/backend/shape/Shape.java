@@ -1,53 +1,65 @@
 package com.geometrypuzzle.backend.shape;
 
 import com.geometrypuzzle.backend.point.Point;
+import com.geometrypuzzle.backend.shape.ShapeConfig.RandomShape;
 import lombok.Data;
 
+import javax.swing.text.html.Option;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
+import java.util.OptionalInt;
+import java.util.stream.IntStream;
 @Data
 public class Shape {
-    /* shape is seen as a list of connected points in order */
-    private List<Point> coordinates;
 
-    public boolean isConvex() {
-        Double orientation = null;
-        double sumOfAngles = 0.0;
-        /* This logic is built around the idea of convex polygon having
-         * - the sum of its exterior angles equal to 360 degrees
-         * - arc tangent having an orientation when traversing the line*/
-        /* inspired by - https://www.youtube.com/watch?v=XOk0aGwZYn8 */
+    private List<Point> coordinates = new ArrayList();
+    private Integer maxX;
+    private Integer minX;
+    private Integer maxY;
+    private Integer minY;
+    public boolean addPoint(Point point) {
+        /* Shape input validity is based on future shape */
+        List<Point> newCoords = new ArrayList(this.coordinates);
+        newCoords.add(point);
 
-        if (!isPolygon()) return false;
-
-        // Initializing the angle of the last two points as reference for the first point
-        Point previousPoint = coordinates.get(coordinates.size() - 1);
-        double previousThetha = ShapeUtils.atan2BetweenPoints(previousPoint, coordinates.get(coordinates.size() - 2));
-
-        for (int i = 0; i < coordinates.size(); i++) {
-            Point newPoint = coordinates.get(i);
-            double newTheta = ShapeUtils.atan2BetweenPoints(newPoint, previousPoint);
-
-            /* obtain normalized angle */
-            double angle = ShapeUtils.normalizeAngle(newTheta - previousThetha);
-
-            /* initialize orientation - if null*/
-            orientation = Optional.ofNullable(orientation).orElse(angle > 0.0 ? 1.0 : -1.0);
-
-            // If there is an orientation change ( concave ), or angle = 0.0 ( flat, handles for scenario of consecutive points )
-            boolean isConcave = orientation * angle <= 0.0;
-            if (isConcave) return false;
-
-            /* update previous values */
-            sumOfAngles += angle;
-            previousPoint = newPoint;
-            previousThetha = newTheta;
+        /* Do not check for convex if shape still not formed */
+        if (!ShapeUtils.isPolygon(newCoords)){
+            this.coordinates.add(point);
+        } else if (ShapeUtils.isConvex(newCoords)) {
+            this.coordinates.add(point);
+        } else {
+            /* rejected point */
+            return false;
         }
-        return Math.abs(Math.round(sumOfAngles / (Math.PI * 2))) == 1;
+        /* Update new zone */
+        boolean uninitialized = maxX == null;
+        if(uninitialized || maxX < point.getX()) maxX = point.getX();
+        if(uninitialized || maxY < point.getY()) maxY = point.getY();
+        if(uninitialized || minX > point.getX()) minX = point.getX();
+        if(uninitialized || minY > point.getY()) minY = point.getY();
+        return true;
     }
 
     private boolean isPolygon() {
-        return this.coordinates.size() > 2;
+        return ShapeUtils.isPolygon(this.coordinates);
+    }
+    public boolean isConvex() {
+        return ShapeUtils.isConvex(this.coordinates);
+    }
+
+    public void generateRandomShape(){
+        int numberOfCoordinates = ShapeUtils.randomInt(RandomShape.VALID_MINIMUM, RandomShape.maxCoordinates);
+            IntStream.range(0, numberOfCoordinates).forEach(
+                    val -> {
+                        int randomX, randomY;
+                        Point randomShape;
+                        do {
+                            randomX = ShapeUtils.randomInt(RandomShape.minX, RandomShape.maxX);
+                            randomY = ShapeUtils.randomInt(RandomShape.minY, RandomShape.maxY);
+                            randomShape = new Point(randomX, randomY);
+                        } while (this.addPoint(randomShape));
+                    }
+            );
     }
 }
