@@ -1,6 +1,6 @@
-package com.geometrypuzzle.backend.Shape;
+package com.geometrypuzzle.backend.shape;
 
-import com.geometrypuzzle.backend.Point.Point;
+import com.geometrypuzzle.backend.point.Point;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -22,13 +22,13 @@ class ShapeTestFromCSV {
         // Arrange
         List<String> commaSeperated = List.of(input.split(","));
         List<Point> cleanInput = ShapeTestUtils.parseAsPoints(commaSeperated, ":");
-        shape.setShape(cleanInput);
+        shape.setCoordinates(cleanInput);
 
         // Act
         boolean isConvex = shape.isConvex();
 
         // Assert
-        Assertions.assertEquals(isConvex, true);
+        Assertions.assertTrue(isConvex);
     }
 
     @ParameterizedTest(name = "{0}")
@@ -37,12 +37,12 @@ class ShapeTestFromCSV {
         // Arrange
         List<String> commaSeperated = List.of(input.split(","));
         List<Point> cleanInput = ShapeTestUtils.parseAsPoints(commaSeperated, ":");
-        shape.setShape(cleanInput);
+        shape.setCoordinates(cleanInput);
 
         // Act
         boolean isConvex = shape.isConvex();
 
         // Assert
-        Assertions.assertEquals(isConvex, false);
+        Assertions.assertFalse(isConvex);
     }
 }

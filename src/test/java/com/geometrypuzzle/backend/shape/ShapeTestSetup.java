@@ -1,15 +1,14 @@
-package com.geometrypuzzle.backend.Shape;
+package com.geometrypuzzle.backend.shape;
 
-import com.geometrypuzzle.backend.Point.Point;
+import com.geometrypuzzle.backend.point.Point;
 import lombok.Getter;
 import org.junit.jupiter.params.provider.Arguments;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 public class ShapeTestSetup {
-        private List<Point> shapePoints;
+        private final List<Point> shapePoints;
         public ShapeTestSetup(Point... shapePoints){
             this.shapePoints = List.of(shapePoints);
         }

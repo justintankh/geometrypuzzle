@@ -1,6 +1,6 @@
-package com.geometrypuzzle.backend.Shape;
+package com.geometrypuzzle.backend.shape;
 
-import com.geometrypuzzle.backend.Point.Point;
+import com.geometrypuzzle.backend.point.Point;
 import lombok.Data;
 
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.Optional;
 @Data
 public class Shape {
     /* shape is seen as a list of connected points in order */
-    private List<Point> shape;
+    private List<Point> coordinates;
 
     public boolean isConvex() {
         Double orientation = null;
@@ -22,20 +22,20 @@ public class Shape {
         if (!isPolygon()) return false;
 
         // Initializing the angle of the last two points as reference for the first point
-        Point previousPoint = shape.get(shape.size() - 1);
-        double previousThetha = atan2BetweenPoints(previousPoint, shape.get(shape.size() - 2));
+        Point previousPoint = coordinates.get(coordinates.size() - 1);
+        double previousThetha = ShapeUtils.atan2BetweenPoints(previousPoint, coordinates.get(coordinates.size() - 2));
 
-        for (int i = 0; i < shape.size(); i++) {
-            Point newPoint = shape.get(i);
-            double newTheta = atan2BetweenPoints(newPoint, previousPoint);
+        for (int i = 0; i < coordinates.size(); i++) {
+            Point newPoint = coordinates.get(i);
+            double newTheta = ShapeUtils.atan2BetweenPoints(newPoint, previousPoint);
 
             /* obtain normalized angle */
-            double angle = normalizeAngle(newTheta - previousThetha);
+            double angle = ShapeUtils.normalizeAngle(newTheta - previousThetha);
 
             /* initialize orientation - if null*/
             orientation = Optional.ofNullable(orientation).orElse(angle > 0.0 ? 1.0 : -1.0);
 
-            // If there is an orientation change ( concave ), or angle = 0.0 ( flat )
+            // If there is an orientation change ( concave ), or angle = 0.0 ( flat, handles for scenario of consecutive points )
             boolean isConcave = orientation * angle <= 0.0;
             if (isConcave) return false;
 
@@ -47,25 +47,7 @@ public class Shape {
         return Math.abs(Math.round(sumOfAngles / (Math.PI * 2))) == 1;
     }
 
-    private static double normalizeAngle(double angle) {
-        if (angle <= -Math.PI) {
-            angle += Math.PI * 2;
-
-        } else if (angle > Math.PI) {
-            angle -= Math.PI * 2;
-        }
-        return angle;
-    }
-
-    public boolean isPolygon() {
-        return this.shape.size() > 2;
-    }
-
-    // TODO:
-    // - Check for consecutive points, question on handling
-    // ? If repeated, return False
-
-    public static double atan2BetweenPoints(Point newPoint, Point oldPoint) {
-        return Math.atan2(newPoint.getY() - oldPoint.getY(), newPoint.getX() - oldPoint.getX());
+    private boolean isPolygon() {
+        return this.coordinates.size() > 2;
     }
 }
