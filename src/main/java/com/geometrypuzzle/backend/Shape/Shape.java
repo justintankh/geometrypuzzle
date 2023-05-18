@@ -29,19 +29,20 @@ public class Shape {
             Point newPoint = shape.get(i);
             double newTheta = atan2BetweenPoints(newPoint, previousPoint);
 
-            double angle = newTheta - previousThetha;
+            /* obtain normalized angle */
+            double angle = normalizeAngle(newTheta - previousThetha);
 
-            /* normalize angle */
-            angle = normalizeAngle(angle);
-
-            /* initialize orientation */
-            orientation = Optional.of(orientation).orElse(angle > 0.0 ? 1.0 : -1.0);
+            /* initialize orientation - if null*/
+            orientation = Optional.ofNullable(orientation).orElse(angle > 0.0 ? 1.0 : -1.0);
 
             // If there is an orientation change ( concave ), or angle = 0.0 ( flat )
             boolean isConcave = orientation * angle <= 0.0;
             if (isConcave) return false;
 
+            /* update previous values */
             sumOfAngles += angle;
+            previousPoint = newPoint;
+            previousThetha = newTheta;
         }
         return Math.abs(Math.round(sumOfAngles / (Math.PI * 2))) == 1;
     }

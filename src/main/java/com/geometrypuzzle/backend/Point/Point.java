@@ -1,10 +1,13 @@
 package com.geometrypuzzle.backend.Point;
 
-import lombok.Builder;
 import lombok.Data;
 
 @Data
-@Builder
 public class Point {
     private int x, y;
+
+    public Point(int x, int y){
+        this.x = x;
+        this.y = y;
+    }
 }
