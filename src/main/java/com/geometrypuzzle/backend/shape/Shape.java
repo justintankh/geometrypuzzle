@@ -34,7 +34,7 @@ public class Shape {
         /* Update new zone */
         boolean uninitialized = maxX == null;
         if (uninitialized || maxX < point.getX()) maxX = point.getX();
-        if (uninitialized || maxY < point.getY()) maxY = point.getY();
+//        if (uninitialized || maxY < point.getY()) maxY = point.getY();
         if (uninitialized || minX > point.getX()) minX = point.getX();
         if (uninitialized || minY > point.getY()) minY = point.getY();
         return true;
