@@ -1,6 +1,6 @@
-package com.geometrypuzzle.backend.Shape;
+package com.geometrypuzzle.backend.shape;
 
-import com.geometrypuzzle.backend.Point.Point;
+import com.geometrypuzzle.backend.point.Point;
 
 import java.util.List;
 import java.util.stream.Collectors;

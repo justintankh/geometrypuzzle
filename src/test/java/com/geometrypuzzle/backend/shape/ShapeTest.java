@@ -1,14 +1,12 @@
-package com.geometrypuzzle.backend.Shape;
+package com.geometrypuzzle.backend.shape;
 
-import com.geometrypuzzle.backend.Point.Point;
+import com.geometrypuzzle.backend.point.Point;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 class ShapeTest {
@@ -29,11 +27,11 @@ class ShapeTest {
     @MethodSource("isConvexPolygonsTestParam")
     void isConvex(ShapeTestSetup testShape) {
         // ARRANGE
-        shape.setShape(testShape.getShapePoints());
+        shape.setCoordinates(testShape.getShapePoints());
         // ACT
         boolean isConvex = shape.isConvex();
         // ASSERT
-        Assertions.assertEquals(isConvex, true);
+        Assertions.assertTrue(isConvex);
     }
 
     private static Stream<Arguments> isNotConvexPolygonsTestParam(){
@@ -46,10 +44,10 @@ class ShapeTest {
     @MethodSource("isNotConvexPolygonsTestParam")
     void isNotConvex(ShapeTestSetup testShape) {
         // ARRANGE
-        shape.setShape(testShape.getShapePoints());
+        shape.setCoordinates(testShape.getShapePoints());
         // ACT
         boolean isConvex = shape.isConvex();
         // ASSERT
-        Assertions.assertEquals(isConvex, false);
+        Assertions.assertFalse(isConvex);
     }
 }
