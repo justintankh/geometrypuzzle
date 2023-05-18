@@ -4,8 +4,10 @@ import com.geometrypuzzle.backend.point.Point;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvFileSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 class ShapeTest {
@@ -79,7 +81,6 @@ class ShapeTest {
     void generateRandomShapeIsValid() {
         // ARRANGE
         shapeUnderTest.generateRandomShape();
-        System.out.println(shapeUnderTest.getCoordinates());
         // ACT
         boolean isConvex = shapeUnderTest.isConvex();
         // ASSERT
@@ -116,5 +117,36 @@ class ShapeTest {
         Assertions.assertEquals(testShape.getShapeInfo().getMinX(), shapeUnderTest.getMinX());
         Assertions.assertEquals(testShape.getShapeInfo().getMaxY(), shapeUnderTest.getMaxY());
         Assertions.assertEquals(testShape.getShapeInfo().getMinY(), shapeUnderTest.getMinY());
+    }
+
+    /* Paramterized test by CSV here */
+    @ParameterizedTest(name = "{0}")
+    @CsvFileSource(resources = "/convexTestTrue.csv")
+    void isConvexFromCsv(String input) {
+        // Arrange
+        List<String> commaSeperated = List.of(input.split(","));
+        List<Point> cleanInput = ShapeTestUtils.parseAsPoints(commaSeperated, ":");
+        shapeUnderTest.setCoordinates(cleanInput);
+
+        // Act
+        boolean isConvex = shapeUnderTest.isConvex();
+
+        // Assert
+        Assertions.assertTrue(isConvex);
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @CsvFileSource(resources = "/convexTestFalse.csv")
+    void isNotConvexFromCsv(String input) {
+        // Arrange
+        List<String> commaSeperated = List.of(input.split(","));
+        List<Point> cleanInput = ShapeTestUtils.parseAsPoints(commaSeperated, ":");
+        shapeUnderTest.setCoordinates(cleanInput);
+
+        // Act
+        boolean isConvex = shapeUnderTest.isConvex();
+
+        // Assert
+        Assertions.assertFalse(isConvex);
     }
 }
