@@ -1,22 +1,33 @@
 package com.geometrypuzzle.backend.shape;
 
 import com.geometrypuzzle.backend.point.Point;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import org.junit.jupiter.params.provider.Arguments;
 
 import java.util.List;
 
 @Getter
 public class ShapeTestSetup {
-        private final List<Point> shapePoints;
-        public ShapeTestSetup(Point... shapePoints){
-            this.shapePoints = List.of(shapePoints);
-        }
-        public Arguments getTestArgs(){
-            return Arguments.of(this);
-        }
-        @Override
-        public String toString(){
-            return "%s coordinates".formatted(this.shapePoints.size());
-        }
+    @Builder
+    @Getter
+    public static class ShapeInfo {
+        private int maxX, maxY, minX, minY, length;
+    }
+    private final List<Point> shapePoints;
+    private final ShapeInfo shapeInfo;
+    ShapeTestSetup(Point... shapePoints) {
+        this.shapeInfo = null;
+        this.shapePoints = List.of(shapePoints);
+    }
+
+    ShapeTestSetup(ShapeInfo shapeInfo, Point... shapePoints) {
+        this.shapeInfo = shapeInfo;
+        this.shapePoints = List.of(shapePoints);
+    }
+
+    @Override
+    public String toString() {
+        return "%s points, length: %s".formatted(this.shapePoints.size(), this.shapeInfo.getLength());
+    }
 }
