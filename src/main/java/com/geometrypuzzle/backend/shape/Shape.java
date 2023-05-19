@@ -18,7 +18,7 @@ public class Shape {
     private Integer minY;
     public void generateRandomShape() {
         int numberOfCoordinates = ShapeUtils.randomInt(RandomShape.VALID_MINIMUM, RandomShape.maxCoordinates);
-        IntStream.range(0, numberOfCoordinates - 1).forEach(
+        IntStream.range(0, numberOfCoordinates).forEach(
                 val -> {
                     Point randomShape;
                     do {
@@ -31,6 +31,11 @@ public class Shape {
     }
 
     public boolean addPoint(Point point) {
+        /* Reject the point of it already exists */
+        if(this.coordinates.contains(point)){
+            return false;
+        }
+
         /* Shape input validity is based on future shape */
         List<Point> newCoords = new ArrayList(this.coordinates);
         newCoords.add(point);

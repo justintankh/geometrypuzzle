@@ -1,6 +1,9 @@
 package com.geometrypuzzle.backend.shape;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.geometrypuzzle.backend.point.Point;
+import com.geometrypuzzle.backend.utils.Utils;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -10,6 +13,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.List;
 import java.util.stream.Stream;
 
+@Slf4j
 class ShapeTest {
     Shape shapeUnderTest;
 
@@ -76,13 +80,14 @@ class ShapeTest {
         Assertions.assertFalse(isConvex);
     }
 
-    @RepeatedTest(10)
+    @RepeatedTest(100)
     @DisplayName("Random shape with configuration")
-    void generateRandomShapeIsValid() {
+    void generateRandomShapeIsValid() throws JsonProcessingException {
         // ARRANGE
         shapeUnderTest.generateRandomShape();
         // ACT
         boolean isConvex = shapeUnderTest.isConvex();
+        if(!isConvex) throw new IllegalStateException(Utils.Objectmapper.INSTANCE.jsonify(shapeUnderTest.getCoordinates()));
         // ASSERT
         Assertions.assertTrue(isConvex);
     }
