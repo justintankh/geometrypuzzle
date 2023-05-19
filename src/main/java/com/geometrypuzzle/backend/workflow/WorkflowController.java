@@ -1,8 +1,8 @@
 package com.geometrypuzzle.backend.workflow;
 
-import com.geometrypuzzle.backend.data.SessionService;
 import com.geometrypuzzle.backend.point.Point;
 import com.geometrypuzzle.backend.puzzle.Puzzle;
+import com.geometrypuzzle.backend.session.SessionService;
 import com.geometrypuzzle.backend.shape.Shape;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
