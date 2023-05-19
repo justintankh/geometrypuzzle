@@ -19,6 +19,22 @@ on:
 jobs:
     build:
         runs-on: ubuntu-latest
+
+        services:
+            postgres:
+                # Docker Hub image
+                image: postgres
+                env:
+                    POSTGRES_USER: username
+                    POSTGRES_PASSWORD: password
+                    POSTGRES_DB: backend
+                # Set health checks to wait until postgres has started
+                options: >-
+                    --health-cmd pg_isready
+                    --health-interval 10s
+                    --health-timeout 5s
+                    --health-retries 5
+
         permissions: write-all
         steps:
             - uses: actions/checkout@v3
@@ -34,7 +50,7 @@ jobs:
                   cache: maven
 
             - name: Build
-              run: mvn --batch-mode -DskipTests package
+              run: mvn --batch-mode -DskipTests=true package
 
             - name: Test
               run: mvn --batch-mode -Dmaven.test.failure.ignore=true test
