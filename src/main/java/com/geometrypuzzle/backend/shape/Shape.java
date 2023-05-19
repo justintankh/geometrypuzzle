@@ -16,6 +16,19 @@ public class Shape {
     private Integer minX;
     private Integer maxY;
     private Integer minY;
+    public void generateRandomShape() {
+        int numberOfCoordinates = ShapeUtils.randomInt(RandomShape.VALID_MINIMUM, RandomShape.maxCoordinates);
+        IntStream.range(0, numberOfCoordinates - 1).forEach(
+                val -> {
+                    Point randomShape;
+                    do {
+                        int randomX = ShapeUtils.randomInt(RandomShape.minX, RandomShape.maxX);
+                        int randomY = ShapeUtils.randomInt(RandomShape.minY, RandomShape.maxY);
+                        randomShape = new Point(randomX, randomY);
+                    } while (this.addPoint(randomShape));
+                }
+        );
+    }
 
     public boolean addPoint(Point point) {
         /* Shape input validity is based on future shape */
@@ -25,6 +38,7 @@ public class Shape {
         /* Do not check for convex if shape still not formed */
         if (!ShapeUtils.isPolygon(newCoords)) {
             this.coordinates.add(point);
+            /* If future is valid convex polygon */
         } else if (ShapeUtils.isConvex(newCoords)) {
             this.coordinates.add(point);
         } else {
@@ -40,26 +54,14 @@ public class Shape {
         return true;
     }
 
-    private boolean isPolygon() {
-        return ShapeUtils.isPolygon(this.coordinates);
+    public boolean isPointInside(Point point){
+        boolean inXBound = point.getX() >= this.minX && point.getX() <= this.maxX;
+        boolean inYBound = point.getY() >= this.minY && point.getY() <= this.maxY;
+        return inXBound && inYBound;
     }
 
+    /* following is* wildcard, RestController will represent ( convex: boolean ) as response field */
     public boolean isConvex() {
         return ShapeUtils.isConvex(this.coordinates);
-    }
-
-    public void generateRandomShape() {
-        int numberOfCoordinates = ShapeUtils.randomInt(RandomShape.VALID_MINIMUM, RandomShape.maxCoordinates);
-        IntStream.range(0, numberOfCoordinates).forEach(
-                val -> {
-                    int randomX, randomY;
-                    Point randomShape;
-                    do {
-                        randomX = ShapeUtils.randomInt(RandomShape.minX, RandomShape.maxX);
-                        randomY = ShapeUtils.randomInt(RandomShape.minY, RandomShape.maxY);
-                        randomShape = new Point(randomX, randomY);
-                    } while (this.addPoint(randomShape));
-                }
-        );
     }
 }
