@@ -1,4 +1,4 @@
-package com.geometrypuzzle.backend.data;
+package com.geometrypuzzle.backend.session;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.geometrypuzzle.backend.shape.Shape;
