@@ -1,41 +1,22 @@
 package com.geometrypuzzle.backend.workflow;
 
+import com.geometrypuzzle.backend.data.SessionService;
 import com.geometrypuzzle.backend.point.Point;
 import com.geometrypuzzle.backend.puzzle.Puzzle;
 import com.geometrypuzzle.backend.shape.Shape;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @SpringBootApplication
 @RestController
 @RequestMapping("")
 public class WorkflowController {
-
-
-    private static boolean isHasSession(String uuid) {
-        List<String> mockUUIDStore = List.of("mockId");
-        return mockUUIDStore.contains(uuid);
-    }
-    private static Shape retrieveShape(String uuid) {
-        // TODO: db
-        Shape sessionShape = new Shape();
-        sessionShape.generateRandomShape();
-        return sessionShape;
-    }
-
-    private static STEP retrieveStep(String uuid) {
-        // TODO: db
-        return STEP.INCOMPLETE;
-    }
-
-    private static void createStore(String uuid){
-        // TODO: db
-    }
+    @Autowired
+    private SessionService sessionService;
 
     @GetMapping
     public String test() {
@@ -44,14 +25,14 @@ public class WorkflowController {
 
     @PostMapping("/startWorkflow")
     public Puzzle startWorkflow(@RequestBody String uuid) {
-        boolean hasSession = isHasSession(uuid);
+        boolean hasSession = sessionService.hasSession(uuid);
 
-        Shape storedShape = hasSession ? retrieveShape(uuid) : new Shape();
-        STEP storedStep = hasSession ? retrieveStep(uuid) : STEP.START;
+        Shape storedShape = hasSession ? sessionService.retrieveShape(uuid) : new Shape();
+        Step storedStep = hasSession ? sessionService.retrieveStep(uuid) : Step.START;
 
         if(!hasSession){
             /* Create new UUID */
-            createStore(uuid);
+            sessionService.createStore(uuid);
         }
 
         // Construct factory workflow
@@ -66,10 +47,10 @@ public class WorkflowController {
 
     @PostMapping("/sendMessage")
     public Puzzle sendMessage(@RequestBody RequestDetails request) {
-        boolean hasSession = isHasSession(request.getUuid());
+        boolean hasSession = sessionService.hasSession(request.getUuid());
 
         // Reconstruct Shape
-        Shape retrievedShape = hasSession ? retrieveShape(request.getUuid()) : new Shape();
+        Shape retrievedShape = hasSession ? sessionService.retrieveShape(request.getUuid()) : new Shape();
 
         // Construct factory workflow
         Workflow workflow = Workflow.builder()
@@ -85,7 +66,7 @@ public class WorkflowController {
     static
     class RequestDetails {
         String uuid;
-        STEP step;
+        Step Step;
         Point point;
     }
 }

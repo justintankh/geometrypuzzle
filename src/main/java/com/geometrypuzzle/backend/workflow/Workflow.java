@@ -4,14 +4,11 @@ import com.geometrypuzzle.backend.shape.Shape;
 import lombok.Builder;
 import lombok.Data;
 
-enum STEP {
-    START,RANDOM, INCOMPLETE, COMPLETE, FINALIZED;
-}
-
 @Data
 @Builder
 public class Workflow {
-    String uuid;
-    STEP step;
+    String processKey;
+    String businessKey;
+    Step step;
     Shape shape;
 }

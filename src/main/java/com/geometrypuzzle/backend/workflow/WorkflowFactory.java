@@ -11,9 +11,9 @@ import java.util.function.Consumer;
 
 @Slf4j
 public class WorkflowFactory {
-    private STEP step;
+    private Step step;
     private PuzzleService puzzleService;
-    private Map<STEP, Consumer<PuzzleService>> handler = new HashMap<>();
+    private Map<Step, Consumer<PuzzleService>> handler = new HashMap<>();
 
     public WorkflowFactory(Workflow workflow) {
         this.step = workflow.getStep();
@@ -23,15 +23,15 @@ public class WorkflowFactory {
 
     // TODO: Tie up beans
     @PostConstruct
-    private Map<STEP, Consumer<PuzzleService>> configureFactory() {
+    private Map<Step, Consumer<PuzzleService>> configureFactory() {
         log.info("Post Construct is called");
         /* Handling as a consumer because we don't want to prematurely call the service */
-        handler.put(STEP.START, service -> service.startPuzzle());
-        handler.put(STEP.RANDOM, service -> service.randomShapeGeneration());
-        handler.put(STEP.INCOMPLETE, service -> service.startPuzzle());
-        handler.put(STEP.COMPLETE, service -> service.startPuzzle());
+        handler.put(Step.START, service -> service.startPuzzle());
+        handler.put(Step.RANDOM, service -> service.randomShapeGeneration());
+        handler.put(Step.INCOMPLETE, service -> service.startPuzzle());
+        handler.put(Step.COMPLETE, service -> service.startPuzzle());
         /* Sonarlint compliant - not replacing the rest for readability */
-        handler.put(STEP.FINALIZED, PuzzleService::startPuzzle);
+        handler.put(Step.FINALIZED, PuzzleService::startPuzzle);
         return handler;
     }
 
