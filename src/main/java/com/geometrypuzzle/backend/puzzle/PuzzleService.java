@@ -34,7 +34,7 @@ public class PuzzleService {
         // 3. (x, y)
         // 4. (x, y)
         // Please enter # to finalize your shape or coordinates (no) in x y format
-        PuzzleDisplay puzzleDisplay = PuzzleDisplay.builder()
+        Puzzle.PuzzleDisplay puzzleDisplay = Puzzle.PuzzleDisplay.builder()
                 .displayBanner("Your customer generated shape is")
                 .displayMessage("mockMessage")
                 .displayInstructions("Please enter # to finalize your shape or coordinates (no) in x y format")
