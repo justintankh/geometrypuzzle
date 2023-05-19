@@ -7,12 +7,13 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 @Slf4j
 public class WorkflowFactory {
-    private PuzzleService puzzleService;
     private STEP step;
-    private Map<STEP, Puzzle> handler = new HashMap<>();
+    private PuzzleService puzzleService;
+    private Map<STEP, Consumer<PuzzleService>> handler = new HashMap<>();
 
     public WorkflowFactory(Workflow workflow) {
         this.step = workflow.getStep();
@@ -20,19 +21,28 @@ public class WorkflowFactory {
         this.configureFactory();
     }
 
+    // TODO: Tie up beans
     @PostConstruct
-    private Map<STEP, Puzzle> configureFactory() {
+    private Map<STEP, Consumer<PuzzleService>> configureFactory() {
         log.info("Post Construct is called");
-        handler.put(STEP.START, puzzleService.startPuzzle());
-        handler.put(STEP.RANDOM, puzzleService.randomShapeGeneration());
-        handler.put(STEP.INCOMPLETE, puzzleService.startPuzzle());
-        handler.put(STEP.COMPLETE, puzzleService.startPuzzle());
-        handler.put(STEP.FINALIZED, puzzleService.startPuzzle());
+        /* Handling as a consumer because we don't want to prematurely call the service */
+        handler.put(STEP.START, service -> service.startPuzzle());
+        handler.put(STEP.RANDOM, service -> service.randomShapeGeneration());
+        handler.put(STEP.INCOMPLETE, service -> service.startPuzzle());
+        handler.put(STEP.COMPLETE, service -> service.startPuzzle());
+        /* Sonarlint compliant - not replacing the rest for readability */
+        handler.put(STEP.FINALIZED, PuzzleService::startPuzzle);
         return handler;
     }
 
     public Puzzle triggerService() {
         log.info("Calling step in Puzzle Service: {}", step);
-        return handler.get(step);
+        /* Obtaining the method corresponding to the STEP */
+        Consumer<PuzzleService> serviceConsumer = handler.get(step);
+        /* Calls the method in the service */
+        serviceConsumer.accept(puzzleService);
+
+        /* Obtain the mutated Puzzle class */
+        return this.puzzleService.getPuzzleResponse();
     }
 }

@@ -87,8 +87,9 @@ class ShapeTest {
         shapeUnderTest.generateRandomShape();
         // ACT
         boolean isConvex = shapeUnderTest.isConvex();
-        if(!isConvex) throw new IllegalStateException(Utils.Objectmapper.INSTANCE.jsonify(shapeUnderTest.getCoordinates()));
         // ASSERT
+        /* Left here to monitoring odd case, to trigger on build:github actions */
+        if(!isConvex) throw new IllegalStateException(Utils.Objectmapper.INSTANCE.jsonify(shapeUnderTest.getCoordinates()));
         Assertions.assertTrue(isConvex);
     }
 

@@ -16,16 +16,25 @@ import java.util.List;
 @RequestMapping("")
 public class WorkflowController {
 
-    private static Shape getShape() {
+
+    private static boolean isHasSession(String uuid) {
+        List<String> mockUUIDStore = List.of("mockId");
+        return mockUUIDStore.contains(uuid);
+    }
+    private static Shape retrieveShape(String uuid) {
+        // TODO: db
         Shape sessionShape = new Shape();
         sessionShape.generateRandomShape();
         return sessionShape;
     }
 
-    private static boolean isHasSession(String uuid) {
-        List<String> uuids = List.of("mockId");
-        boolean hasSession = uuids.contains(uuid);
-        return hasSession;
+    private static STEP retrieveStep(String uuid) {
+        // TODO: db
+        return STEP.INCOMPLETE;
+    }
+
+    private static void createStore(String uuid){
+        // TODO: db
     }
 
     @GetMapping
@@ -36,26 +45,23 @@ public class WorkflowController {
     @PostMapping("/startWorkflow")
     public Puzzle startWorkflow(@RequestBody String uuid) {
         boolean hasSession = isHasSession(uuid);
-        Shape sessionShape = null;
 
-        Puzzle.PuzzleDisplay puzzleDisplay = Puzzle.PuzzleDisplay.builder()
-                .displayBanner(null)
-                .displayMessage("mockMessage")
-                .displayInstructions("[1] Create a custom shape\n" + "[2] Create a random shape")
-                .build();
+        Shape storedShape = hasSession ? retrieveShape(uuid) : new Shape();
+        STEP storedStep = hasSession ? retrieveStep(uuid) : STEP.START;
 
-        if (hasSession) {
-            /* Get puzzle return from factory */
-            sessionShape = getShape(); // obtainStoredShape
-            puzzleDisplay = Puzzle.PuzzleDisplay.builder()
-                    .displayBanner(null)
-                    .displayInstructions("mockInstructions")
-                    .displayMessage("mockMessage").build();
+        if(!hasSession){
+            /* Create new UUID */
+            createStore(uuid);
         }
 
-        return Puzzle.builder()
-                .puzzleDisplay(puzzleDisplay)
-                .shape(sessionShape).build();
+        // Construct factory workflow
+        Workflow workflow = Workflow.builder()
+                .step(storedStep)
+                .shape(storedShape)
+                .build();
+
+        WorkflowFactory factory = new WorkflowFactory(workflow);
+        return factory.triggerService();
     }
 
     @PostMapping("/sendMessage")
@@ -63,7 +69,7 @@ public class WorkflowController {
         boolean hasSession = isHasSession(request.getUuid());
 
         // Reconstruct Shape
-        Shape retrievedShape = hasSession ? getShape() : new Shape();
+        Shape retrievedShape = hasSession ? retrieveShape(request.getUuid()) : new Shape();
 
         // Construct factory workflow
         Workflow workflow = Workflow.builder()
