@@ -36,7 +36,7 @@ public class SessionService {
 
     public Session createStore(String uuid) {
         Session newSession = new Session();
-        newSession.setBusinessKey(uuid);
+        newSession.setProcessKey(uuid);
         newSession.setStep(Step.START);
         sessionRepository.save(newSession);
         return newSession;
