@@ -2,8 +2,12 @@ package com.geometrypuzzle.backend.workflow;
 
 import com.geometrypuzzle.backend.puzzle.Puzzle;
 import com.geometrypuzzle.backend.puzzle.PuzzleService;
+import com.geometrypuzzle.backend.session.StoreService;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -21,8 +25,6 @@ public class WorkflowFactory {
         this.configureFactory();
     }
 
-    // TODO: Tie up beans
-    @PostConstruct
     private Map<Step, Consumer<PuzzleService>> configureFactory() {
         log.info("Post Construct is called");
         /* Handling as a consumer because we don't want to prematurely call the service */
@@ -41,8 +43,7 @@ public class WorkflowFactory {
         Consumer<PuzzleService> serviceConsumer = handler.get(step);
         /* Calls the method in the service */
         serviceConsumer.accept(puzzleService);
-
-        /* Obtain the mutated Puzzle class */
+        /* Return the mutated Puzzle class */
         return this.puzzleService.getPuzzleResponse();
     }
 }

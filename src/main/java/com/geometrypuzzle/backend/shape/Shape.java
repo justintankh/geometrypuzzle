@@ -12,6 +12,7 @@ import java.util.stream.IntStream;
 public class Shape {
 
     private List<Point> coordinates = new ArrayList();
+    private boolean convex;
     private Integer maxX;
     private Integer minX;
     private Integer maxY;
