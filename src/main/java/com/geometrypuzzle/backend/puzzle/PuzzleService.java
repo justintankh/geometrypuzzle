@@ -1,6 +1,7 @@
 package com.geometrypuzzle.backend.puzzle;
 
 import com.geometrypuzzle.backend.shape.Shape;
+import com.geometrypuzzle.backend.workflow.Step;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -8,12 +9,14 @@ public class PuzzleService {
     private Shape storedShape;
     private Puzzle puzzleResponse;
 
-    public PuzzleService(Shape shape){
+    public PuzzleService(Shape shape) {
         this.storedShape = shape;
     }
-    public Puzzle getPuzzleResponse(){
+
+    public Puzzle getPuzzleResponse() {
         return this.puzzleResponse;
     }
+
     public void startPuzzle() {
         /* Check for matching UUID, continue workflow last leftOff */
 
@@ -30,6 +33,7 @@ public class PuzzleService {
         puzzleResponse = Puzzle.builder()
                 .puzzleDisplay(puzzleDisplay)
                 .shape(storedShape)
+                .nextStep(Step.INCOMPLETE)
                 .build();
     }
 
@@ -57,6 +61,7 @@ public class PuzzleService {
         puzzleResponse = Puzzle.builder()
                 .puzzleDisplay(puzzleDisplay)
                 .shape(puzzleResponse.getShape())
+                .nextStep(Step.COMPLETE)
                 .build();
     }
 }

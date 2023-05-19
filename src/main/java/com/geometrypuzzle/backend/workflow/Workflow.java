@@ -8,7 +8,6 @@ import lombok.Data;
 @Builder
 public class Workflow {
     String processKey;
-    String businessKey;
     Step step;
     Shape shape;
 }
