@@ -1,11 +1,9 @@
 package com.geometrypuzzle.backend.puzzle;
 
-import com.geometrypuzzle.backend.point.Point;
-
-import java.util.List;
+import com.geometrypuzzle.backend.shape.Shape;
 
 public class Puzzle {
-    List<Point> selectedPoints;
+    Shape currentShape;
 
     void StartWorkflow() {
         /* Check for matching UUID, continue workflow last leftOff */
