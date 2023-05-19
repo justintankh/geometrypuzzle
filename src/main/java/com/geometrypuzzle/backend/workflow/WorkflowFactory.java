@@ -13,6 +13,7 @@ public class WorkflowFactory {
     private PuzzleService puzzleService;
     private STEP step;
     private Map<STEP, Puzzle> handler = new HashMap<>();
+
     public WorkflowFactory(Workflow workflow) {
         this.step = workflow.getStep();
         this.puzzleService = new PuzzleService(workflow.getShape());
@@ -21,6 +22,7 @@ public class WorkflowFactory {
 
     @PostConstruct
     private Map<STEP, Puzzle> configureFactory() {
+        log.info("Post Construct is called");
         handler.put(STEP.START, puzzleService.startPuzzle());
         handler.put(STEP.RANDOM, puzzleService.randomShapeGeneration());
         handler.put(STEP.INCOMPLETE, puzzleService.startPuzzle());

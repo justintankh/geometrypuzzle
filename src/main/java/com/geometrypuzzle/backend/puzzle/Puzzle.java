@@ -11,7 +11,12 @@ import lombok.Data;
 public class Puzzle {
     Shape shape;
     PuzzleDisplay puzzleDisplay;
-    public Puzzle(Shape shape){
-        this.shape = shape;
+
+    @Data
+    @Builder
+    public static class PuzzleDisplay {
+        String displayBanner;
+        String displayMessage;
+        String displayInstructions;
     }
 }
