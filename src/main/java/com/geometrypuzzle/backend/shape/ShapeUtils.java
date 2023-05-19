@@ -10,8 +10,8 @@ public class ShapeUtils {
         throw new IllegalStateException("Utility class"); /* Sonarlint compliance */
     }
 
-    static boolean isPolygon(List<Point> coordinates) {
-        return coordinates.size() > 2;
+    static boolean isPolygon(List<Point> points) {
+        return points.size() > 2;
     }
 
     static boolean isConvex(List<Point> coordinates) {

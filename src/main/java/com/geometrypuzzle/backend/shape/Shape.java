@@ -60,7 +60,9 @@ public class Shape {
         return inXBound && inYBound;
     }
 
-    /* following is* wildcard, RestController will represent ( convex: boolean ) as response field */
+    /* following is* wildcard, RestController will represent ( convex: boolean ) as response field
+    *  - Even though * wildcard is not an attribute of class
+    * */
     public boolean isConvex() {
         return ShapeUtils.isConvex(this.coordinates);
     }
