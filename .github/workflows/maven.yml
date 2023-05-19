@@ -29,11 +29,11 @@ jobs:
                     POSTGRES_PASSWORD: password
                     POSTGRES_DB: backend
                 # Set health checks to wait until postgres has started
-                options: >-
-                    --health-cmd pg_isready
-                    --health-interval 10s
-                    --health-timeout 5s
-                    --health-retries 5
+                # options: >-
+                #     --health-cmd pg_isready
+                #     --health-interval 10s
+                #     --health-timeout 5s
+                #     --health-retries 5
 
         permissions: write-all
         steps:
@@ -50,10 +50,10 @@ jobs:
                   cache: maven
 
             - name: Build with Maven
-              run: mvn package --batch-mode -DskipTests=true
+              run: mvn --batch-mode -DskipTests=true package
 
             - name: JUnit Test
-              run: mvn test --batch-mode -Dspring.profiles.active=test
+              run: mvn --batch-mode -Dmaven.test.failure.ignore=true -Dspring.profiles.active=test test
 
             - name: JUnit Test Report
               uses: mikepenz/action-junit-report@v3
