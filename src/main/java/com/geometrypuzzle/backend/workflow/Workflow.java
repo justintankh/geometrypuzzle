@@ -1,12 +1,11 @@
-package com.geometrypuzzle.backend.puzzle;
+package com.geometrypuzzle.backend.workflow;
 
 import com.geometrypuzzle.backend.shape.Shape;
 import lombok.Builder;
 import lombok.Data;
 
-
 enum STEP {
-    START, INCOMPLETE, COMPLETE, FINALIZED;
+    START,RANDOM, INCOMPLETE, COMPLETE, FINALIZED;
 }
 
 @Data
