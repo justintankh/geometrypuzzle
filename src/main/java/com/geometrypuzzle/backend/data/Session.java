@@ -7,22 +7,14 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 
-@Entity
 @Data
+@Entity
 public class Session {
     @Id
-    @SequenceGenerator(
-            name = "workflow_id_sequence",
-            sequenceName = "workflow_id_sequence",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = GenerationType.UUID,
-            generator = "workflow_id_sequence"
-    )
     private String processKey;
-    private String businessKey;
+
     private Step step;
+
     private String shapeAsJson;
     public Session(){}
     public Shape getShape() throws JsonProcessingException {
