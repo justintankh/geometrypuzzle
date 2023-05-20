@@ -18,19 +18,21 @@ public class WorkflowFactory {
     @PostConstruct
     private Map<Step, Consumer<PuzzleService>> configureFactory() {
         log.info("Post Construct is called");
-        /* Handling as a consumer because we don't want to prematurely call the service */
-        handler.put(Step.START, service -> service.startPuzzle());
-        handler.put(Step.RANDOM, service -> service.randomShapeGeneration());
-        handler.put(Step.INCOMPLETE, service -> service.startPuzzle());
-        handler.put(Step.COMPLETE, service -> service.startPuzzle());
-        /* Sonarlint compliant - not replacing the rest for readability */
-        handler.put(Step.FINALIZED, PuzzleService::startPuzzle);
+        handler.put(Step.START, PuzzleService::startPuzzle);
+        handler.put(Step.RANDOM_SHAPE, PuzzleService::generateRandom);
+        handler.put(Step.ADD_POINT, PuzzleService::addPoint);
+        handler.put(Step.TEST_POINT, PuzzleService::dispatchPage);
+        handler.put(Step.INVALID, PuzzleService::dispatchPage);
+        handler.put(Step.INCOMPLETE, PuzzleService::dispatchPage);
+        handler.put(Step.COMPLETE, PuzzleService::dispatchPage);
+        handler.put(Step.FINAL_SHAPE, PuzzleService::dispatchPage);
+        handler.put(Step.QUIT, PuzzleService::dispatchPage);
         return handler;
     }
 
     public Puzzle triggerService(Workflow workflow) {
         log.info("Calling step in Puzzle Service: {}", workflow.getStep());
-        PuzzleService puzzleService = new PuzzleService(workflow.getShape(), workflow.getPoint());
+        PuzzleService puzzleService = new PuzzleService(workflow);
         /* Obtaining the method corresponding to the STEP */
         Consumer<PuzzleService> serviceConsumer = handler.get(workflow.getStep());
         /* Calls the method in the service */

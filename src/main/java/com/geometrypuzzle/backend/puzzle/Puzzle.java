@@ -10,9 +10,11 @@ import lombok.Data;
 @Builder
 @AllArgsConstructor
 public class Puzzle {
-    PuzzleDisplay puzzleDisplay;
+    // To update session in store
+    Step storeStep;
+    // For response to frontend
     Shape shape;
-    Step nextStep;
+    PuzzleDisplay puzzleDisplay;
 
     @Data
     @Builder
