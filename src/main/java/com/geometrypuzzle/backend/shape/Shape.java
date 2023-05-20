@@ -2,9 +2,7 @@ package com.geometrypuzzle.backend.shape;
 
 import com.geometrypuzzle.backend.point.Point;
 import com.geometrypuzzle.backend.shape.ShapeConfig.RandomShape;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
