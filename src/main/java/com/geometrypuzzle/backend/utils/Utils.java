@@ -29,7 +29,7 @@ public final class Utils {
      * @param value - Value to check if null
      * @param consumer - Callback taking in Value as parameter
      * @param <T> - Type of Value
-     *  Over complicating to practice
+     *  Overcomplicating to practice
      */
     public static <T> void consumeIfPresent(T value, Consumer<T> consumer) {
         Optional.ofNullable(value).ifPresent(consumer);

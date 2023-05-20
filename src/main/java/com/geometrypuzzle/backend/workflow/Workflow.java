@@ -14,7 +14,7 @@ public class Workflow {
     Point point;
 
     public enum Step {
-        /* Make sure enums order are retained when adding Steps, database infers as smallint */
+        /* Make sure enums values are retained when modifying, database infers as smallint */
         START,
         ADD_POINT,
         INCOMPLETE,
