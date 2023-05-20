@@ -29,7 +29,7 @@ public class WorkflowController {
         Puzzle response = workflowFactory.triggerService(workflow);
 
         // Clean up response to send to frontend
-        return FilteredResponse.clean(response);
+        return FilteredResponse.adapter(response);
     }
 
     @PostMapping("restart")
@@ -41,7 +41,7 @@ public class WorkflowController {
         Puzzle response = workflowFactory.triggerService(workflow);
 
         // Don't need to update workflow as step was restarted, stored state is the same
-        return FilteredResponse.clean(response);
+        return FilteredResponse.adapter(response);
     }
 
     @PostMapping("continue")
@@ -74,7 +74,7 @@ public class WorkflowController {
         Shape shape;
         Puzzle.PuzzleDisplay display;
 
-        public static FilteredResponse clean(Puzzle puzzle){
+        public static FilteredResponse adapter(Puzzle puzzle){
             return FilteredResponse.builder()
                     .shape(puzzle.getShape())
                     .display(puzzle.getPuzzleDisplay())
