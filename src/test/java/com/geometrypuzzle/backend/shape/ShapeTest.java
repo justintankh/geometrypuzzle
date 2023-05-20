@@ -11,6 +11,7 @@ import org.junit.jupiter.params.provider.CsvFileSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -84,12 +85,14 @@ class ShapeTest {
     @DisplayName("Random shape with configuration")
     void generateRandomShapeIsValid() throws JsonProcessingException {
         // ARRANGE
+        Long timeStart = System.nanoTime();
         shapeUnderTest.generateRandomShape();
         // ACT
         boolean isConvex = shapeUnderTest.isConvex();
         // ASSERT
-        /* Left here to monitoring odd case, to trigger on build:github actions */
-        if(!isConvex) throw new IllegalStateException(Utils.jsonify(shapeUnderTest.getCoordinates()));
+        /* Left here to monitoring bad cases, when triggered on build:github actions */
+        if(!shapeUnderTest.isPolygon()) throw new RuntimeException("Took too long %sms".formatted(TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - timeStart)));
+        if(!isConvex) throw new IllegalStateException(Utils.jsonify(shapeUnderTest));
         Assertions.assertTrue(isConvex);
     }
 

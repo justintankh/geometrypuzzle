@@ -25,12 +25,15 @@ public class Shape {
     private Integer minY;
 
     public void generateRandomShape() {
-        /* Remove if regeneration is not allowed */
-        this.coordinates = new ArrayList();
+        this.coordinates = new ArrayList(); /* Remove this necessarily re-instantiation if we're not calling this method again */
 
         int numberOfCoordinates = ShapeUtils.randomInt(RandomShape.VALID_MINIMUM, RandomShape.maxCoordinates);
         Long timeStart = System.nanoTime();
+        boolean isTwoLong;
         do {
+            /* Thread safety */
+            isTwoLong = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - timeStart) >= RandomShape.maxDurationTillFail;
+
             List<Point> points = new ArrayList();
             IntStream.range(0, numberOfCoordinates).forEach(val -> {
                 int randomX = ShapeUtils.randomInt(RandomShape.minX, RandomShape.maxX);
@@ -40,9 +43,9 @@ public class Shape {
             if (ShapeUtils.isConvex(points)) {
                 points.forEach(point -> this.addPoint(point));
             }
-        } while (this.coordinates.size() != numberOfCoordinates);
+        } while (this.coordinates.size() != numberOfCoordinates && !isTwoLong);
         log.info("Generating random shape took {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - timeStart));
-        log.info("size {}, points {}", this.getCoordinates().size(), this.getCoordinates());
+        log.info("desired size {}, points {}", numberOfCoordinates, this.getCoordinates());
     }
 
     public boolean addPoint(Point point) {

@@ -66,7 +66,7 @@ public class ShapeUtils {
         return Math.atan2(newPoint.getY() - oldPoint.getY(), newPoint.getX() - oldPoint.getX());
     }
 
-    static int randomInt(int min, int max) {
-        return new java.util.SplittableRandom().nextInt(min, max);
+    static int randomInt(int inclusiveMin, int inclusiveMax) {
+        return new java.util.SplittableRandom().nextInt(inclusiveMin, inclusiveMax + 1);
     }
 }
