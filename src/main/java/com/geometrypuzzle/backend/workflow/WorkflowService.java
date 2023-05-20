@@ -43,41 +43,33 @@ public class WorkflowService {
                 .build();
     }
 
-    public Workflow processContinueWorkflow(WorkflowController.MessageRequest request) {
+    public Workflow processContinueWorkflow(WorkflowController.ContinueRequest request) {
         Workflow workflow = retrieveWorkflow(request.getProcessKey());
-        boolean isConvex = workflow.getShape().isConvex();
-        Step step = workflow.getStep();
+        // Will revert to stored Step, if message is Null, if invalid String, will throw Exception.
+        Step step = Optional.ofNullable(request)
+                .map(WorkflowController.ContinueRequest::getMessage)
+                .map(WorkflowService::mapMessage)
+                .orElseGet(workflow::getStep);
 
-        String message = Optional.ofNullable(request)
-                .map(WorkflowController.MessageRequest::getMessage)
-                .orElse("");
+        // - TO Add workflow persistence
+        //  e.g. limit illegal message calls
 
-        if (!message.isEmpty()) {
-            switch (message){
-                case "CUSTOM_SHAPE":
-                    step = Step.INCOMPLETE;
-                    break;
-                case "RANDOM_SHAPE":
-                    step = Step.RANDOM;
-                    break;
-                case "ADD_POINT":
-                    step = isConvex ? Step.COMPLETE : Step.INCOMPLETE;
-                    break;
-                case "FINAL_SHAPE":
-                    step = Step.FINALIZED;
-                    break;
-                case "TEST_SHAPE":
-                    step = Step.TEST;
-                    break;
-                default:
-                    step = Step.INCOMPLETE;
-                    break;
-            }
-        }
         workflow.setStep(step);
         workflow.setPoint(request.getPoint());
 
         return workflow;
+    }
+
+    private static Step mapMessage(String message) {
+        return switch (message){
+            case "CUSTOM_SHAPE" -> Step.INCOMPLETE;
+            case "RANDOM_SHAPE" -> Step.RANDOM_SHAPE;
+            case "ADD_POINT" -> Step.ADD_POINT;
+            case "TEST_POINT" -> Step.TEST_POINT;
+            case "FINAL_SHAPE" -> Step.FINAL_SHAPE;
+            case "QUIT" -> Step.QUIT;
+            default -> throw new IllegalArgumentException("Not a valid message name. %s".formatted(message));
+        };
     }
 
     public Workflow retrieveWorkflow(String uuid) {
@@ -95,7 +87,7 @@ public class WorkflowService {
     public void updateWorkflow(String uuid, Puzzle puzzle) {
         Store store = storeService.retrieveStore(uuid);
         store.setShapeJson(puzzle.getShape());
-        store.setStep(puzzle.getNextStep());
+        store.setStep(puzzle.getStoreStep());
         storeService.updateStore(store);
     }
 
