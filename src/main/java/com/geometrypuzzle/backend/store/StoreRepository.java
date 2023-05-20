@@ -1,4 +1,4 @@
-package com.geometrypuzzle.backend.session;
+package com.geometrypuzzle.backend.store;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
