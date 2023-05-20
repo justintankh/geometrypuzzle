@@ -2,13 +2,17 @@ package com.geometrypuzzle.backend.shape;
 
 import com.geometrypuzzle.backend.point.Point;
 import com.geometrypuzzle.backend.shape.ShapeConfig.RandomShape;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
 @Data
+@NoArgsConstructor
 public class Shape {
 
     private List<Point> coordinates = new ArrayList();
