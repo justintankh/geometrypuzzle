@@ -2,24 +2,20 @@ package com.geometrypuzzle.backend.workflow;
 
 import com.geometrypuzzle.backend.puzzle.Puzzle;
 import com.geometrypuzzle.backend.puzzle.PuzzleService;
+import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
 @Slf4j
+@Service
 public class WorkflowFactory {
-    private Step step;
-    private PuzzleService puzzleService;
     private Map<Step, Consumer<PuzzleService>> handler = new HashMap<>();
 
-    public WorkflowFactory(Workflow workflow) {
-        this.step = workflow.getStep();
-        this.puzzleService = new PuzzleService(workflow.getShape());
-        this.configureFactory();
-    }
-
+    @PostConstruct
     private Map<Step, Consumer<PuzzleService>> configureFactory() {
         log.info("Post Construct is called");
         /* Handling as a consumer because we don't want to prematurely call the service */
@@ -32,13 +28,14 @@ public class WorkflowFactory {
         return handler;
     }
 
-    public Puzzle triggerService() {
-        log.info("Calling step in Puzzle Service: {}", step);
+    public Puzzle triggerService(Workflow workflow) {
+        PuzzleService puzzleService = new PuzzleService(workflow.getShape());
+        log.info("Calling step in Puzzle Service: {}", workflow.getStep());
         /* Obtaining the method corresponding to the STEP */
-        Consumer<PuzzleService> serviceConsumer = handler.get(step);
+        Consumer<PuzzleService> serviceConsumer = handler.get(workflow.getStep());
         /* Calls the method in the service */
         serviceConsumer.accept(puzzleService);
         /* Return the mutated Puzzle class */
-        return this.puzzleService.getPuzzleResponse();
+        return puzzleService.getPuzzleDetails();
     }
 }

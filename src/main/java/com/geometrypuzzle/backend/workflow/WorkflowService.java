@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class WorkflowService {
@@ -15,15 +16,16 @@ public class WorkflowService {
     @Autowired
     private StoreService storeService;
 
-    public Workflow restartWorkflow(String uuid) {
+    public Workflow processStartWorkflow(String uuid) {
         boolean hasSession = storeService.hasSession(uuid);
 
         Store store = hasSession ?
                 storeService.retrieveStore(uuid) : newStore(uuid);
 
-        store.setShapeAsJson(new Shape());
-        store.setStep(Step.START);
-        storeService.updateStore(store);
+// - Consider making restart workflow endpoint
+//        store.setShapeAsJson(new Shape());
+//        store.setStep(Step.START);
+//        storeService.updateStore(store);
 
         return Workflow.builder()
                 .processKey(uuid)
@@ -31,6 +33,43 @@ public class WorkflowService {
                 .step(store.getStep())
                 .build();
     }
+
+    public Workflow processContinueWorkflow(WorkflowController.MessageRequest request) {
+        Workflow workflow = retrieveWorkflow(request.getProcessKey());
+        Step step = workflow.getStep();
+
+        String message = Optional.ofNullable(request)
+                .map(WorkflowController.MessageRequest::getMessage)
+                .orElse("");
+
+        if (!message.isEmpty()) {
+            switch (message){
+                case "CUSTOM_SHAPE":
+                    step = Step.INCOMPLETE;
+                    break;
+                case "RANDOM_SHAPE":
+                    step = Step.RANDOM;
+                    break;
+                case "ADD_POINT":
+                    step = workflow.getShape().isConvex() ?
+                            Step.COMPLETE : Step.INCOMPLETE;
+                    break;
+                case "FINAL_SHAPE":
+                    step = Step.FINALIZED;
+                    break;
+                case "TEST_SHAPE":
+                    step = Step.TEST;
+                    break;
+                default:
+                    step = Step.INCOMPLETE;
+                    break;
+            }
+            workflow.setStep(step);
+        }
+
+        return workflow;
+    }
+
     public Workflow retrieveWorkflow(String uuid) {
         boolean hasSession = storeService.hasSession(uuid);
 
