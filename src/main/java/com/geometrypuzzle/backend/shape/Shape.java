@@ -4,11 +4,14 @@ import com.geometrypuzzle.backend.point.Point;
 import com.geometrypuzzle.backend.shape.ShapeConfig.RandomShape;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
+@Slf4j
 @Data
 @NoArgsConstructor
 public class Shape {
@@ -20,23 +23,31 @@ public class Shape {
     private Integer minX;
     private Integer maxY;
     private Integer minY;
+
     public void generateRandomShape() {
+        /* Remove if regeneration is not allowed */
+        this.coordinates = new ArrayList();
+
         int numberOfCoordinates = ShapeUtils.randomInt(RandomShape.VALID_MINIMUM, RandomShape.maxCoordinates);
-        IntStream.range(0, numberOfCoordinates).forEach(
-                val -> {
-                    Point randomShape;
-                    do {
-                        int randomX = ShapeUtils.randomInt(RandomShape.minX, RandomShape.maxX);
-                        int randomY = ShapeUtils.randomInt(RandomShape.minY, RandomShape.maxY);
-                        randomShape = new Point(randomX, randomY);
-                    } while (this.addPoint(randomShape));
-                }
-        );
+        Long timeStart = System.nanoTime();
+        do {
+            List<Point> points = new ArrayList();
+            IntStream.range(0, numberOfCoordinates).forEach(val -> {
+                int randomX = ShapeUtils.randomInt(RandomShape.minX, RandomShape.maxX);
+                int randomY = ShapeUtils.randomInt(RandomShape.minY, RandomShape.maxY);
+                points.add(new Point(randomX, randomY));
+            });
+            if (ShapeUtils.isConvex(points)) {
+                points.forEach(point -> this.addPoint(point));
+            }
+        } while (this.coordinates.size() != numberOfCoordinates);
+        log.info("Generating random shape took {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - timeStart));
+        log.info("size {}, points {}", this.getCoordinates().size(), this.getCoordinates());
     }
 
     public boolean addPoint(Point point) {
         /* Reject the point of it already exists */
-        if(this.coordinates.contains(point)){
+        if (this.coordinates.contains(point)) {
             return false;
         }
 
@@ -63,17 +74,20 @@ public class Shape {
         return true;
     }
 
-    public boolean isPointInside(Point point){
+    public boolean isPointInside(Point point) {
         boolean inXBound = point.getX() >= this.minX && point.getX() <= this.maxX;
         boolean inYBound = point.getY() >= this.minY && point.getY() <= this.maxY;
         return inXBound && inYBound;
     }
 
     /* following is* wildcard, RestController will represent ( convex: boolean ) as response field
-    *  - Even though * wildcard is not an attribute of class
-    * */
+     *  - Even though * wildcard is not an attribute of class
+     * */
     public boolean isConvex() {
         return ShapeUtils.isConvex(this.coordinates);
     }
-    public boolean isPolygon() { return ShapeUtils.isPolygon(this.coordinates); }
+
+    public boolean isPolygon() {
+        return ShapeUtils.isPolygon(this.coordinates);
+    }
 }

@@ -13,10 +13,10 @@ public class ShapeConfig {
         private RandomShape() {
             throw new IllegalStateException("Utility class"); /* Sonarlint compliance */
         }
-
+        // TODO: Connect springboot @Value
         public static final int VALID_MINIMUM = 3;
         @Value("${randomShapeConfig.maxCoordinates:10}")
-        public static int maxCoordinates = 10;
+        public static int maxCoordinates = 8;
         @Value("${randomShapeConfig.maximum.x}")
         public static int maxX = 10;
         @Value("${randomShapeConfig.maximum.x}")
