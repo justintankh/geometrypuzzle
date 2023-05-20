@@ -45,6 +45,7 @@ public class WorkflowService {
 
     public Workflow processContinueWorkflow(WorkflowController.MessageRequest request) {
         Workflow workflow = retrieveWorkflow(request.getProcessKey());
+        boolean isConvex = workflow.getShape().isConvex();
         Step step = workflow.getStep();
 
         String message = Optional.ofNullable(request)
@@ -60,8 +61,7 @@ public class WorkflowService {
                     step = Step.RANDOM;
                     break;
                 case "ADD_POINT":
-                    step = workflow.getShape().isConvex() ?
-                            Step.COMPLETE : Step.INCOMPLETE;
+                    step = isConvex ? Step.COMPLETE : Step.INCOMPLETE;
                     break;
                 case "FINAL_SHAPE":
                     step = Step.FINALIZED;
@@ -73,8 +73,9 @@ public class WorkflowService {
                     step = Step.INCOMPLETE;
                     break;
             }
-            workflow.setStep(step);
         }
+        workflow.setStep(step);
+        workflow.setPoint(request.getPoint());
 
         return workflow;
     }

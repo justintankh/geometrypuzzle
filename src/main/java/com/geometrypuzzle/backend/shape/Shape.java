@@ -14,6 +14,7 @@ import java.util.stream.IntStream;
 public class Shape {
 
     private List<Point> coordinates = new ArrayList();
+    private boolean polygon;
     private boolean convex;
     private Integer maxX;
     private Integer minX;
@@ -74,4 +75,5 @@ public class Shape {
     public boolean isConvex() {
         return ShapeUtils.isConvex(this.coordinates);
     }
+    public boolean isPolygon() { return ShapeUtils.isPolygon(this.coordinates); }
 }
