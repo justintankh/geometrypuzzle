@@ -1,5 +1,6 @@
 package com.geometrypuzzle.backend.workflow;
 
+import com.geometrypuzzle.backend.point.Point;
 import com.geometrypuzzle.backend.shape.Shape;
 import lombok.Builder;
 import lombok.Data;
@@ -10,4 +11,5 @@ public class Workflow {
     String processKey;
     Step step;
     Shape shape;
+    Point point;
 }

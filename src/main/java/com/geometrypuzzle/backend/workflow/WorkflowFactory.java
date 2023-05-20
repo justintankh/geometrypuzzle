@@ -29,8 +29,8 @@ public class WorkflowFactory {
     }
 
     public Puzzle triggerService(Workflow workflow) {
-        PuzzleService puzzleService = new PuzzleService(workflow.getShape());
         log.info("Calling step in Puzzle Service: {}", workflow.getStep());
+        PuzzleService puzzleService = new PuzzleService(workflow.getShape(), workflow.getPoint());
         /* Obtaining the method corresponding to the STEP */
         Consumer<PuzzleService> serviceConsumer = handler.get(workflow.getStep());
         /* Calls the method in the service */
