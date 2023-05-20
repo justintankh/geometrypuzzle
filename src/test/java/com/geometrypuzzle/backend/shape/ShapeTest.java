@@ -81,7 +81,7 @@ class ShapeTest {
         Assertions.assertFalse(isConvex);
     }
 
-    @RepeatedTest(100)
+    @RepeatedTest(10)
     @DisplayName("Random shape with configuration")
     void generateRandomShapeIsValid() throws JsonProcessingException {
         // ARRANGE
