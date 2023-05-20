@@ -16,11 +16,6 @@ public class ShapeTestSetup {
     }
     private final List<Point> shapePoints;
     private final ShapeInfo shapeInfo;
-    ShapeTestSetup(Point... shapePoints) {
-        this.shapeInfo = null;
-        this.shapePoints = List.of(shapePoints);
-    }
-
     ShapeTestSetup(ShapeInfo shapeInfo, Point... shapePoints) {
         this.shapeInfo = shapeInfo;
         this.shapePoints = List.of(shapePoints);
