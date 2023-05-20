@@ -24,12 +24,12 @@ public class WorkflowController {
         Workflow workflow = workflowService.processStartWorkflow(request.getProcessKey());
 
         // Construct factory workflow
-        Puzzle puzzle = workflowFactory.triggerService(workflow);
+        Puzzle response = workflowFactory.triggerService(workflow);
 
         // Update next step - save to DB
-        workflowService.updateWorkflow(workflow.getProcessKey(), puzzle);
+        workflowService.updateWorkflow(workflow.getProcessKey(), response);
 
-        return puzzle;
+        return response;
     }
 
     @PostMapping("restart")
@@ -40,7 +40,7 @@ public class WorkflowController {
         // Construct factory workflow
         Puzzle puzzle = workflowFactory.triggerService(workflow);
 
-        // Update next step - save to DB
+        // Update step for session persistence - save to DB
         workflowService.updateWorkflow(workflow.getProcessKey(), puzzle);
 
         return puzzle;
@@ -54,7 +54,7 @@ public class WorkflowController {
         // Construct factory workflow
         Puzzle puzzle = workflowFactory.triggerService(workflow);
 
-        // Update next step - save to DB
+        // Update step for session persistence - save to DB
         workflowService.updateWorkflow(workflow.getProcessKey(), puzzle);
 
         return puzzle;
