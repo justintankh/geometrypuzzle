@@ -37,17 +37,12 @@ public class WorkflowController {
         // Restart the session
         Workflow workflow = workflowService.processRestartWorkflow(request.getProcessKey());
 
-        // Construct factory workflow
-        Puzzle puzzle = workflowFactory.triggerService(workflow);
-
-        // Update step for session persistence - save to DB
-        workflowService.updateWorkflow(workflow.getProcessKey(), puzzle);
-
-        return puzzle;
+        // Don't need to update workflow as step was restarted, stored state is the same
+        return workflowFactory.triggerService(workflow);
     }
 
     @PostMapping("continue")
-    public Puzzle continueWorkflow(@RequestBody MessageRequest request) {
+    public Puzzle continueWorkflow(@RequestBody ContinueRequest request) {
         // Understand request and route to next step accordingly
         Workflow workflow = workflowService.processContinueWorkflow(request);
 
@@ -64,7 +59,7 @@ public class WorkflowController {
         String processKey;
     }
     @Getter
-    static class MessageRequest {
+    static class ContinueRequest {
         String processKey;
         Point point;
         String message;
