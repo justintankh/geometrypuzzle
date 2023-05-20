@@ -22,10 +22,19 @@ public class WorkflowService {
         Store store = hasSession ?
                 storeService.retrieveStore(uuid) : newStore(uuid);
 
-// - Consider making restart workflow endpoint
-//        store.setShapeAsJson(new Shape());
-//        store.setStep(Step.START);
-//        storeService.updateStore(store);
+        return Workflow.builder()
+                .processKey(uuid)
+                .shape(store.getShape())
+                .step(store.getStep())
+                .build();
+    }
+
+    public Workflow processRestartWorkflow(String uuid) {
+        Store store = storeService.safeRetrieveStore(uuid);
+
+        store.setShapeJson(new Shape());
+        store.setStep(Step.START);
+        storeService.updateStore(store);
 
         return Workflow.builder()
                 .processKey(uuid)
@@ -84,14 +93,14 @@ public class WorkflowService {
     }
     public void updateWorkflow(String uuid, Puzzle puzzle) {
         Store store = storeService.retrieveStore(uuid);
-        store.setShapeAsJson(puzzle.getShape());
+        store.setShapeJson(puzzle.getShape());
         store.setStep(puzzle.getNextStep());
         storeService.updateStore(store);
     }
 
     private Store newStore(String uuid) {
         Store newStore = storeService.createStore(uuid);
-        newStore.setShapeAsJson(new Shape());
+        newStore.setShapeJson(new Shape());
         newStore.setStep(Step.START);
         storeService.updateStore(newStore);
 
