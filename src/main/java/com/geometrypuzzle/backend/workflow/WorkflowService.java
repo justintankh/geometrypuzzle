@@ -1,9 +1,11 @@
 package com.geometrypuzzle.backend.workflow;
 
+import com.geometrypuzzle.backend.point.Point;
 import com.geometrypuzzle.backend.puzzle.Puzzle;
-import com.geometrypuzzle.backend.session.Store;
-import com.geometrypuzzle.backend.session.StoreService;
 import com.geometrypuzzle.backend.shape.Shape;
+import com.geometrypuzzle.backend.store.Store;
+import com.geometrypuzzle.backend.store.StoreService;
+import com.geometrypuzzle.backend.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +27,7 @@ public class WorkflowService {
         return Workflow.builder()
                 .processKey(uuid)
                 .shape(store.getShape())
+                .point(store.getPoint())
                 .step(store.getStep())
                 .build();
     }
@@ -33,12 +36,14 @@ public class WorkflowService {
         Store store = storeService.safeRetrieveStore(uuid);
 
         store.setShapeJson(new Shape());
-        store.setStep(Step.START);
+        store.setPointJson(new Point());
+        store.setStep(Workflow.Step.START);
         storeService.updateStore(store);
 
         return Workflow.builder()
                 .processKey(uuid)
                 .shape(store.getShape())
+                .point(store.getPoint())
                 .step(store.getStep())
                 .build();
     }
@@ -46,7 +51,7 @@ public class WorkflowService {
     public Workflow processContinueWorkflow(WorkflowController.ContinueRequest request) {
         Workflow workflow = retrieveWorkflow(request.getProcessKey());
         // Will revert to stored Step, if message is Null, if invalid String, will throw Exception.
-        Step step = Optional.ofNullable(request)
+        Workflow.Step step = Optional.ofNullable(request)
                 .map(WorkflowController.ContinueRequest::getMessage)
                 .map(WorkflowService::mapMessage)
                 .orElseGet(workflow::getStep);
@@ -60,14 +65,14 @@ public class WorkflowService {
         return workflow;
     }
 
-    private static Step mapMessage(String message) {
+    private static Workflow.Step mapMessage(String message) {
         return switch (message){
-            case "CUSTOM_SHAPE" -> Step.INCOMPLETE;
-            case "RANDOM_SHAPE" -> Step.RANDOM_SHAPE;
-            case "ADD_POINT" -> Step.ADD_POINT;
-            case "TEST_POINT" -> Step.TEST_POINT;
-            case "FINAL_SHAPE" -> Step.FINAL_SHAPE;
-            case "QUIT" -> Step.QUIT;
+            case "CUSTOM_SHAPE" -> Workflow.Step.INCOMPLETE;
+            case "RANDOM_SHAPE" -> Workflow.Step.RANDOM_SHAPE;
+            case "ADD_POINT" -> Workflow.Step.ADD_POINT;
+            case "TEST_POINT" -> Workflow.Step.TEST_POINT;
+            case "FINAL_SHAPE" -> Workflow.Step.FINAL_SHAPE;
+            case "QUIT" -> Workflow.Step.QUIT;
             default -> throw new IllegalArgumentException("Not a valid message name. %s".formatted(message));
         };
     }
@@ -88,13 +93,17 @@ public class WorkflowService {
         Store store = storeService.retrieveStore(uuid);
         store.setShapeJson(puzzle.getShape());
         store.setStep(puzzle.getStoreStep());
+        // Do not update null value, - for cases not ADD_POINT | TEST_POINT will wipe value
+        // same as if(!null) store.setPointJson(puzzle.getStorePoint())
+        Utils.consumeIfPresent(puzzle.getStorePoint(), store::setPointJson);
+
         storeService.updateStore(store);
     }
 
     private Store newStore(String uuid) {
         Store newStore = storeService.createStore(uuid);
         newStore.setShapeJson(new Shape());
-        newStore.setStep(Step.START);
+        newStore.setStep(Workflow.Step.START);
         storeService.updateStore(newStore);
 
         return newStore;

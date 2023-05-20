@@ -1,7 +1,8 @@
 package com.geometrypuzzle.backend.puzzle;
 
+import com.geometrypuzzle.backend.point.Point;
 import com.geometrypuzzle.backend.shape.Shape;
-import com.geometrypuzzle.backend.workflow.Step;
+import com.geometrypuzzle.backend.workflow.Workflow;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,10 +11,11 @@ import lombok.Data;
 @Builder
 @AllArgsConstructor
 public class Puzzle {
-    // To update session in store
-    Step storeStep;
-    // For response to frontend
+    // To update states in store
+    Workflow.Step storeStep;
+    Point storePoint;
     Shape shape;
+    // For response to frontend
     PuzzleDisplay puzzleDisplay;
 
     @Data

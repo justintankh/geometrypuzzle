@@ -2,6 +2,8 @@ package com.geometrypuzzle.backend.workflow;
 
 import com.geometrypuzzle.backend.point.Point;
 import com.geometrypuzzle.backend.puzzle.Puzzle;
+import com.geometrypuzzle.backend.shape.Shape;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,26 +21,27 @@ public class WorkflowController {
     private WorkflowFactory workflowFactory;
 
     @PostMapping("start")
-    public Puzzle startWorkflow(@RequestBody StartRequest request) {
+    public FilteredResponse startWorkflow(@RequestBody StartRequest request) {
         // Resumes from last session or else create new session
         Workflow workflow = workflowService.processStartWorkflow(request.getProcessKey());
 
-        // Construct factory workflow
+        // Using stored data, run through workflow again
         Puzzle response = workflowFactory.triggerService(workflow);
 
-        // Update next step - save to DB
-        workflowService.updateWorkflow(workflow.getProcessKey(), response);
-
-        return response;
+        // Clean up response to send to frontend
+        return FilteredResponse.clean(response);
     }
 
     @PostMapping("restart")
-    public Puzzle restartWorkflow(@RequestBody StartRequest request) {
+    public FilteredResponse restartWorkflow(@RequestBody StartRequest request) {
         // Restart the session
         Workflow workflow = workflowService.processRestartWorkflow(request.getProcessKey());
 
+        // Start workflow from search
+        Puzzle response = workflowFactory.triggerService(workflow);
+
         // Don't need to update workflow as step was restarted, stored state is the same
-        return workflowFactory.triggerService(workflow);
+        return FilteredResponse.clean(response);
     }
 
     @PostMapping("continue")
@@ -46,13 +49,13 @@ public class WorkflowController {
         // Understand request and route to next step accordingly
         Workflow workflow = workflowService.processContinueWorkflow(request);
 
-        // Construct factory workflow
-        Puzzle puzzle = workflowFactory.triggerService(workflow);
+        // Run through workflow from message sent by frontend
+        Puzzle response = workflowFactory.triggerService(workflow);
 
         // Update step for session persistence - save to DB
-        workflowService.updateWorkflow(workflow.getProcessKey(), puzzle);
+        workflowService.updateWorkflow(workflow.getProcessKey(), response);
 
-        return puzzle;
+        return response;
     }
     @Getter
     static class StartRequest {
@@ -63,6 +66,20 @@ public class WorkflowController {
         String processKey;
         Point point;
         String message;
+    }
+
+    @Builder
+    @Getter
+    static class FilteredResponse {
+        Shape shape;
+        Puzzle.PuzzleDisplay display;
+
+        public static FilteredResponse clean(Puzzle puzzle){
+            return FilteredResponse.builder()
+                    .shape(puzzle.getShape())
+                    .display(puzzle.getPuzzleDisplay())
+                    .build();
+        }
     }
 
     /* for debugging, to be removed */

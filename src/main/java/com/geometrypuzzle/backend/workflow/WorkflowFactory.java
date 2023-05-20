@@ -13,20 +13,22 @@ import java.util.function.Consumer;
 @Slf4j
 @Service
 public class WorkflowFactory {
-    private Map<Step, Consumer<PuzzleService>> handler = new HashMap<>();
+    private Map<Workflow.Step, Consumer<PuzzleService>> handler = new HashMap<>();
 
     @PostConstruct
-    private Map<Step, Consumer<PuzzleService>> configureFactory() {
+    private Map<Workflow.Step, Consumer<PuzzleService>> configureFactory() {
         log.info("Post Construct is called");
-        handler.put(Step.START, PuzzleService::startPuzzle);
-        handler.put(Step.RANDOM_SHAPE, PuzzleService::generateRandom);
-        handler.put(Step.ADD_POINT, PuzzleService::addPoint);
-        handler.put(Step.TEST_POINT, PuzzleService::dispatchPage);
-        handler.put(Step.INVALID, PuzzleService::dispatchPage);
-        handler.put(Step.INCOMPLETE, PuzzleService::dispatchPage);
-        handler.put(Step.COMPLETE, PuzzleService::dispatchPage);
-        handler.put(Step.FINAL_SHAPE, PuzzleService::dispatchPage);
-        handler.put(Step.QUIT, PuzzleService::dispatchPage);
+        /* Steps with logic requiring isolated handling*/
+        handler.put(Workflow.Step.RANDOM_SHAPE, PuzzleService::generateRandom);
+        handler.put(Workflow.Step.ADD_POINT, PuzzleService::addPoint);
+        /* Steps with generic logic, Require dispatch */
+        handler.put(Workflow.Step.START, PuzzleService::dispatchPage);
+        handler.put(Workflow.Step.TEST_POINT, PuzzleService::dispatchPage);
+        handler.put(Workflow.Step.INVALID, PuzzleService::dispatchPage);
+        handler.put(Workflow.Step.INCOMPLETE, PuzzleService::dispatchPage);
+        handler.put(Workflow.Step.COMPLETE, PuzzleService::dispatchPage);
+        handler.put(Workflow.Step.FINAL_SHAPE, PuzzleService::dispatchPage);
+        handler.put(Workflow.Step.QUIT, PuzzleService::dispatchPage);
         return handler;
     }
 

@@ -2,7 +2,6 @@ package com.geometrypuzzle.backend.puzzle;
 
 import com.geometrypuzzle.backend.point.Point;
 import com.geometrypuzzle.backend.shape.Shape;
-import com.geometrypuzzle.backend.workflow.Step;
 import com.geometrypuzzle.backend.workflow.Workflow;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +12,7 @@ import static com.geometrypuzzle.backend.puzzle.Puzzle.PuzzleDisplay.CONST.PLACE
 @Slf4j
 @AllArgsConstructor
 public class PuzzleService {
-    private Step storedStep;
+    private Workflow.Step storedStep;
     private Shape shape;
     private Point point;
     private Puzzle puzzleDetails;
@@ -28,49 +27,41 @@ public class PuzzleService {
         return this.puzzleDetails;
     }
 
-    public void startPuzzle() {
-        Puzzle.PuzzleDisplay puzzleDisplay = getDisplay(Step.START);
-
-        this.puzzleDetails = Puzzle.builder()
-                .puzzleDisplay(puzzleDisplay)
-                .shape(this.shape)
-                .storeStep(Step.START)
-                .build();
-    }
-
     public void addPoint() {
         boolean isAdded = shape.addPoint(point);
 
-        Step nextStep;
+        Workflow.Step nextStep;
         if (!isAdded) {
-            nextStep = Step.INVALID;
+            nextStep = Workflow.Step.INVALID;
         } else if (this.shape.isConvex()) {
-            nextStep = Step.COMPLETE;
+            nextStep = Workflow.Step.COMPLETE;
         } else if (!this.shape.isPolygon()) {
-            nextStep = Step.INCOMPLETE;
+            nextStep = Workflow.Step.INCOMPLETE;
         } else {
             log.error("Unknown condition slipped {}", this);
             throw new RuntimeException("Unknown condition slipped %s".formatted(this));
         }
 
+        Puzzle.PuzzleDisplay puzzleDisplay = getDisplay(nextStep);
+
         this.puzzleDetails = Puzzle.builder()
-                .puzzleDisplay(getDisplay(nextStep))
+                .puzzleDisplay(puzzleDisplay)
                 .shape(this.shape)
                 .storeStep(nextStep)
+                .storePoint(point)
                 .build();
     }
 
     public void generateRandom() {
         // Generate random shape
         shape.generateRandomShape();
-
-        // User will see FINALIZED display for if session persisted
-        Puzzle.PuzzleDisplay puzzleDisplay = getDisplay(Step.RANDOM_SHAPE);
+        
+        Puzzle.PuzzleDisplay puzzleDisplay = getDisplay(Workflow.Step.RANDOM_SHAPE);
 
         puzzleDetails = Puzzle.builder()
                 .puzzleDisplay(puzzleDisplay)
                 .shape(shape)
-                .storeStep(Step.FINAL_SHAPE)
+                .storeStep(Workflow.Step.RANDOM_SHAPE)
                 .build();
     }
 
@@ -79,17 +70,19 @@ public class PuzzleService {
         puzzleDetails = Puzzle.builder()
                 .puzzleDisplay(getDisplay(storedStep))
                 .shape(shape)
+                .storePoint(point)
                 .storeStep(storedStep)
                 .build();
     }
 
-    public Puzzle.PuzzleDisplay getDisplay(Step step) {
+    public Puzzle.PuzzleDisplay getDisplay(Workflow.Step step) {
         String nextIndex = String.valueOf(this.shape.getCoordinates().size());
         String enterNextCoordinates = MESSAGE.ENTER_COORDINATES_MESSAGE.replace(PLACEHOLDERS.INDEX, nextIndex);
 
         return switch (step) {
             case ADD_POINT -> {
-                yield getDisplay(Step.INVALID);
+                /* Normal flow will not flow here */
+                yield getDisplay(Workflow.Step.INCOMPLETE);
             }
             case START -> Puzzle.PuzzleDisplay.builder()
                     .displayBanner(null)
