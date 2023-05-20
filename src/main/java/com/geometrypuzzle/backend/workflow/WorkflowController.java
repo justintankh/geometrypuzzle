@@ -15,14 +15,15 @@ import org.springframework.web.bind.annotation.*;
 public class WorkflowController {
     @Autowired
     private WorkflowService workflowService;
+    @Autowired
+    private WorkflowFactory workflowFactory;
 
     @PostMapping("start")
     public Puzzle startWorkflow(@RequestBody StartRequest request) {
-        Workflow workflow = workflowService.restartWorkflow(request.getUuid());
+        Workflow workflow = workflowService.processStartWorkflow(request.getProcessKey());
 
         // Construct factory workflow
-        WorkflowFactory factory = new WorkflowFactory(workflow);
-        Puzzle puzzle = factory.triggerService();
+        Puzzle puzzle = workflowFactory.triggerService(workflow);
 
         // Update next step - save to DB
         workflowService.updateWorkflow(workflow.getProcessKey(), puzzle);
@@ -32,11 +33,11 @@ public class WorkflowController {
 
     @PostMapping("continue")
     public Puzzle continueWorkflow(@RequestBody MessageRequest request) {
-        Workflow workflow = workflowService.retrieveWorkflow(request.getUuid());
+        // Understand request and route to next step accordingly
+        Workflow workflow = workflowService.processContinueWorkflow(request);
 
         // Construct factory workflow
-        WorkflowFactory factory = new WorkflowFactory(workflow);
-        Puzzle puzzle = factory.triggerService();
+        Puzzle puzzle = workflowFactory.triggerService(workflow);
 
         // Update next step - save to DB
         workflowService.updateWorkflow(workflow.getProcessKey(), puzzle);
@@ -45,12 +46,13 @@ public class WorkflowController {
     }
     @Getter
     static class StartRequest {
-        String uuid;
+        String processKey;
     }
     @Getter
     static class MessageRequest {
-        String uuid;
+        String processKey;
         Point point;
+        String message;
     }
 
     /* for debugging, to be removed */

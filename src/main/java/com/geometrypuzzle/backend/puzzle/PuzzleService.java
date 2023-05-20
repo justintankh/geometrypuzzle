@@ -6,15 +6,19 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class PuzzleService {
+    private String message;
     private Shape storedShape;
-    private Puzzle puzzleResponse;
+    private Puzzle puzzleDetails;
 
     public PuzzleService(Shape shape) {
         this.storedShape = shape;
     }
+    public PuzzleService(Shape shape, String message) {
+        this.storedShape = shape;
+    }
 
-    public Puzzle getPuzzleResponse() {
-        return this.puzzleResponse;
+    public Puzzle getPuzzleDetails() {
+        return this.puzzleDetails;
     }
 
     public void startPuzzle() {
@@ -30,7 +34,7 @@ public class PuzzleService {
                 .displayInstructions("[1] Create a custom shape\n" + "[2] Create a random shape")
                 .build();
 
-        puzzleResponse = Puzzle.builder()
+        puzzleDetails = Puzzle.builder()
                 .puzzleDisplay(puzzleDisplay)
                 .shape(storedShape)
                 .nextStep(Step.INCOMPLETE)
@@ -58,9 +62,9 @@ public class PuzzleService {
                 .displayInstructions("Please enter # to finalize your shape or coordinates (no) in x y format")
                 .build();
 
-        puzzleResponse = Puzzle.builder()
+        puzzleDetails = Puzzle.builder()
                 .puzzleDisplay(puzzleDisplay)
-                .shape(puzzleResponse.getShape())
+                .shape(storedShape)
                 .nextStep(Step.COMPLETE)
                 .build();
     }

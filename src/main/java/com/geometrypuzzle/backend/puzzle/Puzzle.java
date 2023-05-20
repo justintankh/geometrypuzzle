@@ -10,8 +10,8 @@ import lombok.Data;
 @Builder
 @AllArgsConstructor
 public class Puzzle {
-    Shape shape;
     PuzzleDisplay puzzleDisplay;
+    Shape shape;
     Step nextStep;
 
     @Data
