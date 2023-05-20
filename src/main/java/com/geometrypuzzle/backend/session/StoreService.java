@@ -1,7 +1,5 @@
 package com.geometrypuzzle.backend.session;
 
-import com.geometrypuzzle.backend.shape.Shape;
-import com.geometrypuzzle.backend.workflow.Step;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +22,10 @@ public class StoreService {
     public Store retrieveStore(String uuid) {
         Store store = storeRepository.findById(uuid).orElseThrow(StoreDoesNotExistException(uuid));
         return store;
+    }
+
+    public Store safeRetrieveStore(String uuid) {
+        return storeRepository.findById(uuid).orElseGet(() -> createStore(uuid));
     }
 
     public Store createStore(String uuid) {

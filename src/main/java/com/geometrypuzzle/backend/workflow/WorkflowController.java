@@ -20,7 +20,22 @@ public class WorkflowController {
 
     @PostMapping("start")
     public Puzzle startWorkflow(@RequestBody StartRequest request) {
+        // Resumes from last session or else create new session
         Workflow workflow = workflowService.processStartWorkflow(request.getProcessKey());
+
+        // Construct factory workflow
+        Puzzle puzzle = workflowFactory.triggerService(workflow);
+
+        // Update next step - save to DB
+        workflowService.updateWorkflow(workflow.getProcessKey(), puzzle);
+
+        return puzzle;
+    }
+
+    @PostMapping("restart")
+    public Puzzle restartWorkflow(@RequestBody StartRequest request) {
+        // Restart the session
+        Workflow workflow = workflowService.processRestartWorkflow(request.getProcessKey());
 
         // Construct factory workflow
         Puzzle puzzle = workflowFactory.triggerService(workflow);
