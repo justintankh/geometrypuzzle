@@ -121,7 +121,7 @@ public class PuzzleService {
                     .message("Your random shape is")
                     .instructions(MESSAGE.FINALIZED_DISPLAY_INSTRUCTIONS)
                     .allowedRegex(List.of(REGEX.COORDINATES, REGEX.SHARP))
-                    .allowedFlows(List.of(MessageName.ADD_POINT, MessageName.QUIT))
+                    .allowedFlows(List.of(MessageName.TEST_POINT, MessageName.QUIT))
                     .build();
             case FINAL_SHAPE -> Puzzle.PuzzleDisplay.builder()
                     .banner(null)
@@ -144,7 +144,7 @@ public class PuzzleService {
                         .message(MESSAGE.YOUR_CURRENT_SHAPE_IS_VALID_AND_COMPLETE)
                         .instructions(finalizeShapeOrAddCoordinates)
                         .allowedRegex(List.of(REGEX.COORDINATES, REGEX.SHARP))
-                        .allowedFlows(List.of(MessageName.TEST_POINT, MessageName.FINAL_SHAPE))
+                        .allowedFlows(List.of(MessageName.ADD_POINT, MessageName.FINAL_SHAPE))
                         .build();
             }
 

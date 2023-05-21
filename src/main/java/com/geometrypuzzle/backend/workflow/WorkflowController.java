@@ -88,11 +88,13 @@ public class WorkflowController {
     @Getter
     static class FilteredResponse {
         Shape shape;
+        Point point;
         Puzzle.PuzzleDisplay display;
 
         public static FilteredResponse adapter(Puzzle puzzle){
             return FilteredResponse.builder()
                     .shape(puzzle.getShape())
+                    .point(puzzle.getStorePoint())
                     .display(puzzle.getPuzzleDisplay())
                     .build();
         }
