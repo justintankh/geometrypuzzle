@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @SpringBootApplication
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("workflow")
 public class WorkflowController {
