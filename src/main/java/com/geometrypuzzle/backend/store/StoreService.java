@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.function.Supplier;
 
@@ -40,10 +39,5 @@ public class StoreService {
 
     private static Supplier<NoSuchElementException> StoreDoesNotExistException(String uuid) {
         return () -> new NoSuchElementException("Error fetching store for ID %s".formatted(uuid));
-    }
-
-    /* for debugging, to be removed */
-    public List<Store> retrieveAllStore() {
-        return storeRepository.findAll();
     }
 }

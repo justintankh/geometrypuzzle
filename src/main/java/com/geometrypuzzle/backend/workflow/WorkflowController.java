@@ -57,7 +57,6 @@ public class WorkflowController {
         // Update step for session persistence - save to DB
         workflowService.updateWorkflow(workflow.getProcessKey(), response);
 
-        /* Not filtered for debugging, to be changed */
         return FilteredResponse.adapter(response);
     }
     @Getter
@@ -98,12 +97,6 @@ public class WorkflowController {
                     .display(puzzle.getPuzzleDisplay())
                     .build();
         }
-    }
-
-    /* for debugging, to be removed */
-    @GetMapping
-    public Object debugging() {
-        return workflowService.getAllStore();
     }
 }
 

@@ -9,7 +9,6 @@ import com.geometrypuzzle.backend.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -107,10 +106,5 @@ public class WorkflowService {
         storeService.updateStore(newStore);
 
         return newStore;
-    }
-
-    /* for debugging, to be removed */
-    public List<Store> getAllStore() {
-        return storeService.retrieveAllStore();
     }
 }
