@@ -16,6 +16,7 @@ public class ShapeConfig {
             throw new IllegalStateException("Utility class"); /* Sonarlint compliance */
         }
         // TODO: Connect springboot @Value
+        public static final boolean ALLOW_REGENERATE = false;
         public static final int VALID_MINIMUM = 3;
         public static final long maxDurationTillFail = TimeUnit.MILLISECONDS.toMillis(1000);
         @Value("${randomShapeConfig.maxCoordinates:10}")

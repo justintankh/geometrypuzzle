@@ -3,6 +3,7 @@ package com.geometrypuzzle.backend.puzzle;
 import com.geometrypuzzle.backend.point.Point;
 import com.geometrypuzzle.backend.shape.Shape;
 import com.geometrypuzzle.backend.workflow.Workflow.Step;
+import com.geometrypuzzle.backend.workflow.WorkflowController.ContinueRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,10 +24,11 @@ public class Puzzle {
     @Data
     @Builder
     public static class PuzzleDisplay {
-        String displayBanner;
-        String displayMessage;
-        String displayInstructions;
+        String banner;
+        String message;
+        String instructions;
         List<String> allowedRegex;
+        List<ContinueRequest.MessageName> allowedFlows;
 
         public static final class CONST {
 
@@ -37,7 +39,7 @@ public class Puzzle {
 
             public static final class MESSAGE {
                 public static final String ENTER_COORDINATES_MESSAGE = "Please enter coordinates {index} in x y format";
-                public static final String INVALID_COORDINATES_BANNER = ("New coordinates ({x,y}) is invalid!!!\n" + "Not adding new coordinates to the current shape.");
+                public static final String INVALID_COORDINATES_BANNER = ("New coordinates ({x,y}) is invalid!!!\n" + "Not adding new coordinates to the current shape.\n");
                 public static final String YOUR_CURRENT_SHAPE_IS_INCOMPLETE = "Your current shape is incomplete";
                 public static final String YOUR_CURRENT_SHAPE_IS_VALID_AND_COMPLETE = "Your current shape is valid and complete";
                 public static final String FINALIZED_SHAPE_OR_NEXT_COORDINATES_INSTRUCTIONS = "Please enter # to finalize your shape or enter coordinates {index} in x y format";
@@ -49,10 +51,9 @@ public class Puzzle {
 
             public static final class REGEX {
                 public static final String ONE_XOR_TWO = "^[12]$";
-                public static final String COORDINATES = "^\\d+\\s\\d+";
-                public static final String SHARP = "#";
+                public static final String COORDINATES = "^-?\\d+\\s-?\\d+";
+                public static final String SHARP = "^#$";
             }
-
         }
     }
 }

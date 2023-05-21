@@ -5,6 +5,7 @@ import com.geometrypuzzle.backend.puzzle.Puzzle;
 import com.geometrypuzzle.backend.shape.Shape;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -45,7 +46,7 @@ public class WorkflowController {
     }
 
     @PostMapping("continue")
-    public Puzzle continueWorkflow(@RequestBody ContinueRequest request) {
+    public FilteredResponse continueWorkflow(@RequestBody ContinueRequest request) {
         // Understand request and route to next step accordingly
         Workflow workflow = workflowService.processContinueWorkflow(request);
 
@@ -56,17 +57,30 @@ public class WorkflowController {
         workflowService.updateWorkflow(workflow.getProcessKey(), response);
 
         /* Not filtered for debugging, to be changed */
-        return response;
+        return FilteredResponse.adapter(response);
     }
     @Getter
     static class StartRequest {
         String processKey;
     }
     @Getter
-    static class ContinueRequest {
+    public static final class ContinueRequest {
         String processKey;
         Point point;
-        String message;
+        MessageName message;
+        @ToString
+        public enum MessageName {
+            /* Make sure enums values are retained when modifying, database infers as smallint */
+            CUSTOM_SHAPE("CUSTOM_SHAPE"),
+            RANDOM_SHAPE("RANDOM_SHAPE"),
+            ADD_POINT("ADD_POINT"),
+            TEST_POINT("TEST_POINT"),
+            FINAL_SHAPE("FINAL_SHAPE"),
+            QUIT("QUIT");
+
+            MessageName(String value) {
+            }
+        }
     }
 
     @Builder

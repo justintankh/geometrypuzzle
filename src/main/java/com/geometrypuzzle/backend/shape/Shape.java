@@ -25,7 +25,7 @@ public class Shape {
     private Integer minY;
 
     public void generateRandomShape() {
-        this.coordinates = new ArrayList(); /* Remove this necessarily re-instantiation if we're not calling this method again */
+        this.coordinates = new ArrayList();
 
         int numberOfCoordinates = ShapeUtils.randomInt(RandomShape.VALID_MINIMUM, RandomShape.maxCoordinates);
         Long timeStart = System.nanoTime();

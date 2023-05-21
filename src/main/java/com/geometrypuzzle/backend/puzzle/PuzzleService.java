@@ -2,15 +2,15 @@ package com.geometrypuzzle.backend.puzzle;
 
 import com.geometrypuzzle.backend.point.Point;
 import com.geometrypuzzle.backend.shape.Shape;
+import com.geometrypuzzle.backend.shape.ShapeConfig;
 import com.geometrypuzzle.backend.workflow.Workflow;
+import com.geometrypuzzle.backend.workflow.WorkflowController.ContinueRequest.MessageName;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
-import static com.geometrypuzzle.backend.puzzle.Puzzle.PuzzleDisplay.CONST.MESSAGE;
-import static com.geometrypuzzle.backend.puzzle.Puzzle.PuzzleDisplay.CONST.PLACEHOLDERS;
-import static com.geometrypuzzle.backend.puzzle.Puzzle.PuzzleDisplay.CONST.REGEX;
+import static com.geometrypuzzle.backend.puzzle.Puzzle.PuzzleDisplay.CONST.*;
 
 @Slf4j
 @AllArgsConstructor
@@ -56,15 +56,30 @@ public class PuzzleService {
     }
 
     public void generateRandom() {
+
         // Generate random shape
-        shape.generateRandomShape();
-        
+        if(shape.getCoordinates().size() == 0 || ShapeConfig.RandomShape.ALLOW_REGENERATE) {
+            shape.generateRandomShape();
+        };
+
         Puzzle.PuzzleDisplay puzzleDisplay = getDisplay(Workflow.Step.RANDOM_SHAPE);
 
         puzzleDetails = Puzzle.builder()
                 .puzzleDisplay(puzzleDisplay)
                 .shape(shape)
                 .storeStep(Workflow.Step.RANDOM_SHAPE)
+                .build();
+    }
+
+    public void quitWorkflow() {
+
+        // Clear the shape that is stored
+        Puzzle.PuzzleDisplay puzzleDisplay = getDisplay(Workflow.Step.QUIT);
+
+        puzzleDetails = Puzzle.builder()
+                .puzzleDisplay(puzzleDisplay)
+                .shape(new Shape())
+                .storeStep(Workflow.Step.QUIT)
                 .build();
     }
 
@@ -88,42 +103,48 @@ public class PuzzleService {
                 yield getDisplay(Workflow.Step.INCOMPLETE);
             }
             case START -> Puzzle.PuzzleDisplay.builder()
-                    .displayBanner(null)
-                    .displayMessage("Welcome to the GIC geometry puzzle app")
-                    .displayInstructions("[1] Create a custom shape\n" + "[2] Create a random shape")
+                    .banner(null)
+                    .message("Welcome to the GIC geometry puzzle app")
+                    .instructions("[1] Create a custom shape\n" + "[2] Create a random shape")
                     .allowedRegex(List.of(REGEX.ONE_XOR_TWO))
+                    .allowedFlows(List.of(MessageName.CUSTOM_SHAPE, MessageName.RANDOM_SHAPE))
                     .build();
             case INCOMPLETE -> Puzzle.PuzzleDisplay.builder()
-                    .displayBanner(null)
-                    .displayMessage(MESSAGE.YOUR_CURRENT_SHAPE_IS_INCOMPLETE)
-                    .displayInstructions(enterNextCoordinates)
+                    .banner(null)
+                    .message(MESSAGE.YOUR_CURRENT_SHAPE_IS_INCOMPLETE)
+                    .instructions(enterNextCoordinates)
                     .allowedRegex(List.of(REGEX.COORDINATES))
+                    .allowedFlows(List.of(MessageName.ADD_POINT))
                     .build();
             case RANDOM_SHAPE -> Puzzle.PuzzleDisplay.builder()
-                    .displayBanner(null)
-                    .displayMessage("Your random shape is")
-                    .displayInstructions(MESSAGE.FINALIZED_DISPLAY_INSTRUCTIONS)
+                    .banner(null)
+                    .message("Your random shape is")
+                    .instructions(MESSAGE.FINALIZED_DISPLAY_INSTRUCTIONS)
                     .allowedRegex(List.of(REGEX.COORDINATES, REGEX.SHARP))
+                    .allowedFlows(List.of(MessageName.ADD_POINT, MessageName.QUIT))
                     .build();
             case FINAL_SHAPE -> Puzzle.PuzzleDisplay.builder()
-                    .displayBanner(null)
-                    .displayMessage(MESSAGE.FINALIZED_SHAPE_MESSAGE)
-                    .displayInstructions(MESSAGE.FINALIZED_DISPLAY_INSTRUCTIONS)
+                    .banner(null)
+                    .message(MESSAGE.FINALIZED_SHAPE_MESSAGE)
+                    .instructions(MESSAGE.FINALIZED_DISPLAY_INSTRUCTIONS)
                     .allowedRegex(List.of(REGEX.COORDINATES, REGEX.SHARP))
+                    .allowedFlows(List.of(MessageName.TEST_POINT, MessageName.QUIT))
                     .build();
             case QUIT -> Puzzle.PuzzleDisplay.builder()
-                    .displayBanner(null)
-                    .displayMessage("Thank you for playing the GIC geometry puzzle app\n" + "Have a nice day!")
-                    .displayInstructions(null)
+                    .banner(null)
+                    .message("Thank you for playing the GIC geometry puzzle app\n" + "Have a nice day!")
+                    .instructions(null)
+                    .allowedFlows(null)
                     .build();
 
             case COMPLETE -> {
                 String finalizeShapeOrAddCoordinates = MESSAGE.FINALIZED_SHAPE_OR_NEXT_COORDINATES_INSTRUCTIONS.replace(PLACEHOLDERS.INDEX, nextIndex);
                 yield Puzzle.PuzzleDisplay.builder()
-                        .displayBanner(null)
-                        .displayMessage(MESSAGE.YOUR_CURRENT_SHAPE_IS_VALID_AND_COMPLETE)
-                        .displayInstructions(finalizeShapeOrAddCoordinates)
+                        .banner(null)
+                        .message(MESSAGE.YOUR_CURRENT_SHAPE_IS_VALID_AND_COMPLETE)
+                        .instructions(finalizeShapeOrAddCoordinates)
                         .allowedRegex(List.of(REGEX.COORDINATES, REGEX.SHARP))
+                        .allowedFlows(List.of(MessageName.TEST_POINT, MessageName.FINAL_SHAPE))
                         .build();
             }
 
@@ -135,18 +156,20 @@ public class PuzzleService {
                 String yourCurrentShapeIs = MESSAGE.YOUR_CURRENT_SHAPE_IS_INCOMPLETE;
                 String pleaseEnterSharpOrCoords = MESSAGE.ENTER_COORDINATES_MESSAGE.replace(PLACEHOLDERS.INDEX, nextIndex);
                 List<String> withSharpElseWithout = List.of(REGEX.COORDINATES);
+                List<MessageName> allowedFlows = List.of(MessageName.ADD_POINT);
                 if (isComplete) {
                     yourCurrentShapeIs = MESSAGE.YOUR_CURRENT_SHAPE_IS_VALID_AND_COMPLETE;
                     pleaseEnterSharpOrCoords = MESSAGE.FINALIZED_SHAPE_OR_NEXT_COORDINATES_INSTRUCTIONS.replace(PLACEHOLDERS.INDEX, nextIndex);
                     withSharpElseWithout = List.of(REGEX.COORDINATES, REGEX.SHARP);
+                    allowedFlows = List.of(MessageName.ADD_POINT, MessageName.FINAL_SHAPE);
                 }
 
-
                 yield Puzzle.PuzzleDisplay.builder()
-                        .displayBanner(newCoordinatesIsInvalid)
-                        .displayMessage(yourCurrentShapeIs)
-                        .displayInstructions(pleaseEnterSharpOrCoords)
+                        .banner(newCoordinatesIsInvalid)
+                        .message(yourCurrentShapeIs)
+                        .instructions(pleaseEnterSharpOrCoords)
                         .allowedRegex(withSharpElseWithout)
+                        .allowedFlows(allowedFlows)
                         .build();
             }
 
@@ -158,10 +181,11 @@ public class PuzzleService {
                 String finalizedResultsKeyInTest = resultMessage.replace(PLACEHOLDERS.COORDINATES, coordinates) + "\n" + MESSAGE.FINALIZED_DISPLAY_INSTRUCTIONS;
 
                 yield Puzzle.PuzzleDisplay.builder()
-                        .displayBanner(null)
-                        .displayMessage(MESSAGE.FINALIZED_SHAPE_MESSAGE)
-                        .displayInstructions(finalizedResultsKeyInTest)
+                        .banner(null)
+                        .message(MESSAGE.FINALIZED_SHAPE_MESSAGE)
+                        .instructions(finalizedResultsKeyInTest)
                         .allowedRegex(List.of(REGEX.COORDINATES, REGEX.SHARP))
+                        .allowedFlows(List.of(MessageName.TEST_POINT, MessageName.QUIT))
                         .build();
             }
         };

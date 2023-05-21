@@ -21,6 +21,7 @@ public class WorkflowFactory {
         /* Steps with logic requiring isolated handling*/
         handler.put(Workflow.Step.RANDOM_SHAPE, PuzzleService::generateRandom);
         handler.put(Workflow.Step.ADD_POINT, PuzzleService::addPoint);
+        handler.put(Workflow.Step.QUIT, PuzzleService::quitWorkflow);
         /* Steps with generic logic, Require dispatch */
         handler.put(Workflow.Step.START, PuzzleService::dispatchPage);
         handler.put(Workflow.Step.TEST_POINT, PuzzleService::dispatchPage);
@@ -28,7 +29,6 @@ public class WorkflowFactory {
         handler.put(Workflow.Step.INCOMPLETE, PuzzleService::dispatchPage);
         handler.put(Workflow.Step.COMPLETE, PuzzleService::dispatchPage);
         handler.put(Workflow.Step.FINAL_SHAPE, PuzzleService::dispatchPage);
-        handler.put(Workflow.Step.QUIT, PuzzleService::dispatchPage);
         return handler;
     }
 

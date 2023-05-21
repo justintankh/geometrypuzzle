@@ -58,7 +58,7 @@ class WorkflowFactoryTest {
         // ACT
         Puzzle result = undertest.triggerService(mockWorkflow);
         // ASSERT
-        Assertions.assertEquals(result.getPuzzleDisplay().getDisplayMessage(), testSetup.getTestMessage());
+        Assertions.assertEquals(result.getPuzzleDisplay().getMessage(), testSetup.getTestMessage());
     }
 
     @Test
@@ -70,7 +70,7 @@ class WorkflowFactoryTest {
         Puzzle result = undertest.triggerService(mockWorkflow);
 
         // ASSERT
-        Assertions.assertEquals(result.getPuzzleDisplay().getDisplayMessage(), "Welcome to the GIC geometry puzzle app");
+        Assertions.assertEquals(result.getPuzzleDisplay().getMessage(), "Welcome to the GIC geometry puzzle app");
     }
 
     @Test

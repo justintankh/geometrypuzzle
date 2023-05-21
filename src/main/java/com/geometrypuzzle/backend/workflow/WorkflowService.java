@@ -65,14 +65,14 @@ public class WorkflowService {
         return workflow;
     }
 
-    private static Workflow.Step mapMessage(String message) {
+    private static Workflow.Step mapMessage(WorkflowController.ContinueRequest.MessageName message) {
         return switch (message){
-            case "CUSTOM_SHAPE" -> Workflow.Step.INCOMPLETE;
-            case "RANDOM_SHAPE" -> Workflow.Step.RANDOM_SHAPE;
-            case "ADD_POINT" -> Workflow.Step.ADD_POINT;
-            case "TEST_POINT" -> Workflow.Step.TEST_POINT;
-            case "FINAL_SHAPE" -> Workflow.Step.FINAL_SHAPE;
-            case "QUIT" -> Workflow.Step.QUIT;
+            case CUSTOM_SHAPE -> Workflow.Step.INCOMPLETE;
+            case RANDOM_SHAPE -> Workflow.Step.RANDOM_SHAPE;
+            case ADD_POINT -> Workflow.Step.ADD_POINT;
+            case TEST_POINT -> Workflow.Step.TEST_POINT;
+            case FINAL_SHAPE -> Workflow.Step.FINAL_SHAPE;
+            case QUIT -> Workflow.Step.QUIT;
             default -> throw new IllegalArgumentException("Not a valid message name. %s".formatted(message));
         };
     }
