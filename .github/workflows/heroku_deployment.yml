@@ -1,19 +1,8 @@
-# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
-
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
-name: Java CI with Maven
+name: Heroku Deployment
 
 on:
-    pull_request:
+    push:
         branches: ["main"]
-        paths:
-            - "src/main/**"
-
 jobs:
     build:
         runs-on: ubuntu-latest
@@ -39,3 +28,11 @@ jobs:
               if: success() || failure()
               with:
                   report_paths: "**/TEST-*.xml"
+
+            - name: Heroku GitHub Deploy
+              uses: dentarg/heroku@v1.1.2
+              with:
+                  # The Heroku app name
+                  app: geometrypuzzle
+                  # Heroku API key (OAuth token)
+                  key: ${{secrets.HEROKU_API_KEY}}
