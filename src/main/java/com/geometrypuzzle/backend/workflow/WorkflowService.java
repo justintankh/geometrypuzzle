@@ -57,7 +57,7 @@ public class WorkflowService {
                 .orElseGet(workflow::getStep);
 
         // - TO Add workflow persistence
-        //  e.g. limit illegal message calls
+        //  e.g. limit allowed message calls for workflow integrity
 
         workflow.setStep(step);
         workflow.setPoint(request.getPoint());

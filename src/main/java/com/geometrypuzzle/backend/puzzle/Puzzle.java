@@ -2,11 +2,12 @@ package com.geometrypuzzle.backend.puzzle;
 
 import com.geometrypuzzle.backend.point.Point;
 import com.geometrypuzzle.backend.shape.Shape;
-import com.geometrypuzzle.backend.workflow.Workflow;
 import com.geometrypuzzle.backend.workflow.Workflow.Step;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 @Builder
@@ -25,6 +26,7 @@ public class Puzzle {
         String displayBanner;
         String displayMessage;
         String displayInstructions;
+        List<String> allowedRegex;
 
         public static final class CONST {
 
@@ -43,6 +45,12 @@ public class Puzzle {
                 public static final String OUTSIDE_FINALIZED_SHAPE = "Sorry, coordinates ({x,y}) is outside of your finalized shape";
                 public static final String FINALIZED_DISPLAY_INSTRUCTIONS = "Please key in test coordinates in x y format or enter # to quit the game";
                 public static final String FINALIZED_SHAPE_MESSAGE = "Your finalized shape is";
+            }
+
+            public static final class REGEX {
+                public static final String ONE_XOR_TWO = "^[12]$";
+                public static final String COORDINATES = "^\\d+\\s\\d+";
+                public static final String SHARP = "#";
             }
 
         }
