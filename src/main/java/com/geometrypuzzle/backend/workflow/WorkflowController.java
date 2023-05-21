@@ -55,7 +55,7 @@ public class WorkflowController {
         // Update step for session persistence - save to DB
         workflowService.updateWorkflow(workflow.getProcessKey(), response);
 
-        /* Not filtered for debugging, to be removed */
+        /* Not filtered for debugging, to be changed */
         return response;
     }
     @Getter

@@ -6,8 +6,11 @@ import com.geometrypuzzle.backend.workflow.Workflow;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.List;
+
 import static com.geometrypuzzle.backend.puzzle.Puzzle.PuzzleDisplay.CONST.MESSAGE;
 import static com.geometrypuzzle.backend.puzzle.Puzzle.PuzzleDisplay.CONST.PLACEHOLDERS;
+import static com.geometrypuzzle.backend.puzzle.Puzzle.PuzzleDisplay.CONST.REGEX;
 
 @Slf4j
 @AllArgsConstructor
@@ -88,21 +91,25 @@ public class PuzzleService {
                     .displayBanner(null)
                     .displayMessage("Welcome to the GIC geometry puzzle app")
                     .displayInstructions("[1] Create a custom shape\n" + "[2] Create a random shape")
+                    .allowedRegex(List.of(REGEX.ONE_XOR_TWO))
                     .build();
             case INCOMPLETE -> Puzzle.PuzzleDisplay.builder()
                     .displayBanner(null)
                     .displayMessage(MESSAGE.YOUR_CURRENT_SHAPE_IS_INCOMPLETE)
                     .displayInstructions(enterNextCoordinates)
+                    .allowedRegex(List.of(REGEX.COORDINATES))
                     .build();
             case RANDOM_SHAPE -> Puzzle.PuzzleDisplay.builder()
                     .displayBanner(null)
                     .displayMessage("Your random shape is")
                     .displayInstructions(MESSAGE.FINALIZED_DISPLAY_INSTRUCTIONS)
+                    .allowedRegex(List.of(REGEX.COORDINATES, REGEX.SHARP))
                     .build();
             case FINAL_SHAPE -> Puzzle.PuzzleDisplay.builder()
                     .displayBanner(null)
                     .displayMessage(MESSAGE.FINALIZED_SHAPE_MESSAGE)
                     .displayInstructions(MESSAGE.FINALIZED_DISPLAY_INSTRUCTIONS)
+                    .allowedRegex(List.of(REGEX.COORDINATES, REGEX.SHARP))
                     .build();
             case QUIT -> Puzzle.PuzzleDisplay.builder()
                     .displayBanner(null)
@@ -116,6 +123,7 @@ public class PuzzleService {
                         .displayBanner(null)
                         .displayMessage(MESSAGE.YOUR_CURRENT_SHAPE_IS_VALID_AND_COMPLETE)
                         .displayInstructions(finalizeShapeOrAddCoordinates)
+                        .allowedRegex(List.of(REGEX.COORDINATES, REGEX.SHARP))
                         .build();
             }
 
@@ -123,17 +131,22 @@ public class PuzzleService {
                 boolean isComplete = this.shape.isPolygon();
                 String coordinates = "%s,%s".formatted(this.point.getX(), this.point.getY());
                 String newCoordinatesIsInvalid = MESSAGE.INVALID_COORDINATES_BANNER.replace(PLACEHOLDERS.COORDINATES, coordinates);
-                String yourCurrentShapeIs = isComplete ?
-                        MESSAGE.YOUR_CURRENT_SHAPE_IS_VALID_AND_COMPLETE :
-                        MESSAGE.YOUR_CURRENT_SHAPE_IS_INCOMPLETE;
-                String pleaseEnterSharpOrCoords = isComplete ?
-                        MESSAGE.ENTER_COORDINATES_MESSAGE.replace(PLACEHOLDERS.INDEX, nextIndex) :
-                        MESSAGE.FINALIZED_SHAPE_OR_NEXT_COORDINATES_INSTRUCTIONS.replace(PLACEHOLDERS.INDEX, nextIndex);
+
+                String yourCurrentShapeIs = MESSAGE.YOUR_CURRENT_SHAPE_IS_INCOMPLETE;
+                String pleaseEnterSharpOrCoords = MESSAGE.ENTER_COORDINATES_MESSAGE.replace(PLACEHOLDERS.INDEX, nextIndex);
+                List<String> withSharpElseWithout = List.of(REGEX.COORDINATES);
+                if (isComplete) {
+                    yourCurrentShapeIs = MESSAGE.YOUR_CURRENT_SHAPE_IS_VALID_AND_COMPLETE;
+                    pleaseEnterSharpOrCoords = MESSAGE.FINALIZED_SHAPE_OR_NEXT_COORDINATES_INSTRUCTIONS.replace(PLACEHOLDERS.INDEX, nextIndex);
+                    withSharpElseWithout = List.of(REGEX.COORDINATES, REGEX.SHARP);
+                }
+
 
                 yield Puzzle.PuzzleDisplay.builder()
                         .displayBanner(newCoordinatesIsInvalid)
                         .displayMessage(yourCurrentShapeIs)
                         .displayInstructions(pleaseEnterSharpOrCoords)
+                        .allowedRegex(withSharpElseWithout)
                         .build();
             }
 
@@ -148,6 +161,7 @@ public class PuzzleService {
                         .displayBanner(null)
                         .displayMessage(MESSAGE.FINALIZED_SHAPE_MESSAGE)
                         .displayInstructions(finalizedResultsKeyInTest)
+                        .allowedRegex(List.of(REGEX.COORDINATES, REGEX.SHARP))
                         .build();
             }
         };
