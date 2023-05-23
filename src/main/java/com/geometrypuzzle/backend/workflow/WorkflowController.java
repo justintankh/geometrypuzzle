@@ -59,15 +59,18 @@ public class WorkflowController {
 
         return FilteredResponse.adapter(response);
     }
+
     @Getter
     static class StartRequest {
         String processKey;
     }
+
     @Getter
     public static final class ContinueRequest {
         String processKey;
         Point point;
         MessageName message;
+
         @ToString
         public enum MessageName {
             /* Make sure enums values are retained when modifying, database infers as smallint */
@@ -90,7 +93,7 @@ public class WorkflowController {
         Point point;
         Puzzle.PuzzleDisplay display;
 
-        public static FilteredResponse adapter(Puzzle puzzle){
+        public static FilteredResponse adapter(Puzzle puzzle) {
             return FilteredResponse.builder()
                     .shape(puzzle.getShape())
                     .point(puzzle.getStorePoint())

@@ -58,9 +58,9 @@ public class PuzzleService {
     public void generateRandom() {
 
         // Generate random shape
-        if(shape.getCoordinates().size() == 0 || ShapeConfig.RandomShape.ALLOW_REGENERATE) {
+        if (shape.getCoordinates().size() == 0 || ShapeConfig.RandomShape.ALLOW_REGENERATE) {
             shape.generateRandomShape();
-        };
+        }
 
         Puzzle.PuzzleDisplay puzzleDisplay = getDisplay(Workflow.Step.RANDOM_SHAPE);
 

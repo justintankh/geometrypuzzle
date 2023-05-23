@@ -19,7 +19,9 @@ public class Store {
     private String shapeJson;
     private String pointJson;
     private Workflow.Step step;
+
     public Store(){}
+
     public Shape getShape() {
         try {
             return Utils.readValue(this.shapeJson, Shape.class);
@@ -33,6 +35,7 @@ public class Store {
     public void setShapeJson(String jsonified) {
         this.shapeJson = jsonified;
     }
+
     public void setShapeJson(Shape shape) {
         try {
             setShapeJson(Utils.jsonify(shape));
@@ -40,6 +43,7 @@ public class Store {
             throw new RuntimeException(e);
         }
     }
+
     public Point getPoint() {
         try {
             return Utils.readValue(this.pointJson, Point.class);
@@ -49,7 +53,11 @@ public class Store {
             return new Point();
         }
     }
-    public void setPointJson(String jsonified) {this.pointJson = jsonified; }
+
+    public void setPointJson(String jsonified) {
+        this.pointJson = jsonified;
+    }
+
     public void setPointJson(Point point) {
         try {
             setPointJson(Utils.jsonify(point));

@@ -1,7 +1,6 @@
 package com.geometrypuzzle.backend.shape;
 
 import com.geometrypuzzle.backend.point.Point;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -14,6 +13,7 @@ public class ShapeTestSetup {
     public static class ShapeInfo {
         private int maxX, maxY, minX, minY, length;
     }
+
     private final List<Point> shapePoints;
     private final ShapeInfo shapeInfo;
     ShapeTestSetup(ShapeInfo shapeInfo, Point... shapePoints) {

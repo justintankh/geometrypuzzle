@@ -12,9 +12,6 @@ public class ShapeConfig {
     }
 
     public static final class RandomShape {
-        private RandomShape() {
-            throw new IllegalStateException("Utility class"); /* Sonarlint compliance */
-        }
         // TODO: Connect springboot @Value
         public static final boolean ALLOW_REGENERATE = false;
         public static final int VALID_MINIMUM = 3;
@@ -29,5 +26,8 @@ public class ShapeConfig {
         public static int minX = -20;
         @Value("${randomShapeConfig.minimum.y}")
         public static int minY = -20;
+        private RandomShape() {
+            throw new IllegalStateException("Utility class"); /* Sonarlint compliance */
+        }
     }
 }

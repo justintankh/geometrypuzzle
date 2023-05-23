@@ -88,6 +88,7 @@ public class WorkflowService {
                 .step(store.getStep())
                 .build();
     }
+
     public void updateWorkflow(String uuid, Puzzle puzzle) {
         Store store = storeService.retrieveStore(uuid);
         store.setShapeJson(puzzle.getShape());

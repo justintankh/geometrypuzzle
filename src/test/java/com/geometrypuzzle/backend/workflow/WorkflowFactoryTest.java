@@ -75,5 +75,14 @@ class WorkflowFactoryTest {
 
     @Test
     void continueWorkflow() {
+        // ARRANGE
+        mockWorkflow.setStep(Workflow.Step.INCOMPLETE);
+        mockWorkflow.setPoint(new Point(1, 2));
+
+        // ACT
+        Puzzle result = undertest.triggerService(mockWorkflow);
+
+        // ASSERT
+        Assertions.assertEquals(result.getPuzzleDisplay().getMessage(), "Your current shape is incomplete");
     }
 }

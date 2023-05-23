@@ -1,42 +1,42 @@
 name: Heroku Deployment
 
 on:
-    push:
-        branches: ["main"]
+  push:
+    branches: [ "main" ]
 jobs:
-    build:
-        runs-on: ubuntu-latest
-        permissions: write-all
-        steps:
-            - uses: actions/checkout@v3
+  build:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - uses: actions/checkout@v3
 
-            - name: Set up JDK 19
-              uses: actions/setup-java@v3
-              with:
-                  java-version: "19"
-                  distribution: "temurin"
-                  cache: maven
+      - name: Set up JDK 19
+        uses: actions/setup-java@v3
+        with:
+          java-version: "19"
+          distribution: "temurin"
+          cache: maven
 
-            - name: Build with Maven
-              run: mvn --batch-mode -DskipTests=true -f pom-test.xml -Dspring.profiles.active=test package
+      - name: Build with Maven
+        run: mvn --batch-mode -DskipTests=true -f pom-test.xml -Dspring.profiles.active=test package
 
-            - name: JUnit Test
-              run: mvn --batch-mode -Dmaven.test.failure.ignore=true -f pom-test.xml -Dspring.profiles.active=test test
+      - name: JUnit Test
+        run: mvn --batch-mode -Dmaven.test.failure.ignore=true -f pom-test.xml -Dspring.profiles.active=test test
 
-            - name: JUnit Test Report
-              uses: mikepenz/action-junit-report@v3
-              if: success() || failure()
-              with:
-                  report_paths: "**/TEST-*.xml"
+      - name: JUnit Test Report
+        uses: mikepenz/action-junit-report@v3
+        if: success() || failure()
+        with:
+          report_paths: "**/TEST-*.xml"
 
-            - name: Deploy to Heroku
-              # You may pin to the exact commit or the version.
-              # uses: AkhileshNS/heroku-deploy@9fd0f9faae4aa93a38d6f5e25b9128589f1371b0
-              uses: AkhileshNS/heroku-deploy@v3.12.14
-              with:
-                # This will be used for authentication. You can find it in your heroku homepage account settings
-                heroku_api_key: ${{secrets.HEROKU_API_KEY}}
-                # Email that you use with heroku
-                heroku_email: ${{secrets.HEROKU_EMAIL}}
-                # The appname to use for deploying/updating
-                heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
+      - name: Deploy to Heroku
+        # You may pin to the exact commit or the version.
+        # uses: AkhileshNS/heroku-deploy@9fd0f9faae4aa93a38d6f5e25b9128589f1371b0
+        uses: AkhileshNS/heroku-deploy@v3.12.14
+        with:
+          # This will be used for authentication. You can find it in your heroku homepage account settings
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          # Email that you use with heroku
+          heroku_email: ${{secrets.HEROKU_EMAIL}}
+          # The appname to use for deploying/updating
+          heroku_app_name: ${{secrets.HEROKU_APP_NAME}}
