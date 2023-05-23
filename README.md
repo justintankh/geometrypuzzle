@@ -4,6 +4,18 @@ Welcome to the GIC assessment Geometry Puzzle Repository! This repository serves
 live demo, documentation, and source code of the coding assessment. Here, you will find the Backend code and the
 complete logic of the assessment.
 
+## Project Overview
+
+In this coding assessment, I took a focused approach to develop a full-stack chat bot with a scatter plot overlay for visualizing shape building activities. The goal was to create an engaging and interactive experience for users. The key details of the project are as follows:
+
+- Core functionality: The Java Springboot backend code contains the core functionality and logic of the Geometry Puzzle. The backend code is responsible for handling data processing, executing algorithms, and managing chatbot interactions.
+
+- Frontend Presentation: The frontend layer of the project was built using Typescript React. It serves as the presentation layer, providing users with an intuitive interface to interact with the Geometry Puzzle.
+
+- Visualization: The frontend code, built with Typescript React, includes a scatter plot overlay that enables users to visualize their shape building activities. This feature enhances the interactive nature of the Geometry Puzzle.
+
+I encourage you to explore the backend code to gain insights into the core functionality and logic of the Geometry Puzzle. Additionally, reviewing the frontend code will give you a better understanding of the user interface and the interactive features it offers.
+
 ## Frontend Code
 
 The frontend code for the Geometry Puzzle can be accessed
